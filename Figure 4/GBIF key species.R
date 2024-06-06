@@ -17,14 +17,15 @@ ggplot(data = ne_sf) +
   coord_sf() + 
   geom_bin2d(data = rhi, aes(x = decimalLongitude, y = decimalLatitude), binwidth = c(5,5)) + 
   scale_fill_moma_c("ustwo", 
-                    name = "Occ.", 
+                    name = "Occurrences", 
                     trans = "log", 
                     breaks = c(1, 10, 100, 1000, 10000, 100000),
                     direction = -1) + 
   geom_sf() +
   coord_sf() + 
   theme_light() + 
-  xlab("") + ylab("") + ggtitle("Horseshoe bats (Rhinolophus sp.)")
+  xlab("") + ylab("") + 
+  theme(legend.position = 'left', legend.text.position = 'left')
 
 # Aedes aegypti
 
@@ -36,13 +37,15 @@ ne_sf <- ne_coastline(returnclass = "sf")
 
 ggplot(data = ne_sf) +
   geom_sf() +
+  coord_sf() + 
   geom_bin2d(data = aed, aes(x = decimalLongitude, y = decimalLatitude), binwidth = c(5,5)) + 
   scale_fill_moma_c("ustwo", 
-                    name = "Occ.", 
+                    name = "Occurrences", 
                     trans = "log", 
                     breaks = c(1, 10, 100, 1000, 10000, 100000),
                     direction = -1) + 
-  geom_sf(data = ne_sf) +
+  geom_sf() +
   coord_sf() + 
   theme_light() + 
-  xlab("") + ylab("") + ggtitle("Yellow fever mosquito (Aedes aegypti)")
+  xlab("") + ylab("") + 
+  theme(legend.position = 'left', legend.text.position = 'left')
