@@ -1,6 +1,9 @@
 # mac shit
 **.DS_Store
 
+# the big IUCN data 
+./data/IUCN/
+
 # History files
 .Rhistory
 .Rapp.history
