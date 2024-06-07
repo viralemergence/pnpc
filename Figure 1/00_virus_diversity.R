@@ -10,6 +10,7 @@ library(fasterize)
 library(magrittr)
 library(dplyr)
 library(sf)
+library(microbenchmark)
 
 # pull updated data
 outdated <- FALSE
@@ -62,3 +63,10 @@ edge_mat <- as.matrix(
 )
 
 # IUCN data manipulation =======================================================
+mam_raster <- fasterize::raster(iucn_shp, res = 1 / 6)
+bench2 <- microbenchmark::microbenchmark(
+    mammals = mammal_raster <- fasterize(mammal_shapes, mammal_raster, fun = "sum"),
+    times = 20, unit = "s"
+)
+par(mar = c(0, 0.5, 0, 0.5))
+fasterize::plot(mam_raster, axes = FALSE, box = FALSE)
