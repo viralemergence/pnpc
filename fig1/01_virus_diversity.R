@@ -52,8 +52,11 @@ host_taxonomy <- vroom::vroom(here::here("./data/virion/TaxonomyHost.csv"))
 # virion manipulation ==========================================================
 
 # keep out the records we don't like
-good_taxons <- vir[which(vir$VirusNCBIResolved != FALSE &
-    vir$HostNCBIResolved != FALSE & vir$HostFlagID != TRUE), ]
+good_taxons <- vir[which(
+    vir$VirusNCBIResolved != FALSE &
+    vir$HostNCBIResolved != FALSE & 
+    vir$HostFlagID != TRUE & 
+    vir$HostClass == "mammalia"), ]
 # keep only the edges that are represented here
 edges <- edges[which(
     edges$HostTaxID %in% good_taxons$HostTaxID &
@@ -71,12 +74,21 @@ edge_mat <- as.matrix(
 
 # Create viral diversity matrix ================================================
 
-mam_raster <- raster_extract(iucn_shp)
-data_ob <- init_data_ob(iucn_shp, mam_raster)
+mam_raster <- raster_extract(iucn_shp) # this is the full extent we want
+data_ob <- init_data_ob(iucn_shp, mam_raster) # the data object 
 data_ob[] <- 0 # set all of them to zero for now 
 
 # find all the mammals we need to do this process for 
 mams_binomials <- stringr::str_to_lower(unique(iucn_shp$binomial))
+
+all(rownames(edge_mat) %in% host_taxonomy$HostTaxID)
+
+
+
+
+
+
+
 
 # get the virion taxa in terms of binomials
 virion_host_IDs <- unique(

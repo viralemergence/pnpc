@@ -32,13 +32,39 @@ init_data_ob <- function(iucn_data, mam_raster) {
 }
 
 #' match_mammal_taxonomy
-#' @description 
-match_mammal_taxonomy <- function(iucn_data, virion_data, virion_taxonomy) { 
+#' @description There's some weird stuff happening with the mammal taxonomy 
+#' between the IUCN vs VIRION stuff so this is tryng to fix that maybe?
+#' @param iucn_data SF_MULTIPOLYGON. The iucn data that comes in shapefile form
+#' from the IUCN itself
+#' @param virion dataframe. The virion dataframe 
+#' @param virion_taxonomy dataframe. The HostTaxonomy of the virion database
+#'
+#' @return character vector of all the mammals that are to be quieried with 
+#' a hash / match table
+match_mammal_taxonomy <- function(iucn_data, virion, virion_taxonomy) { 
+    iucn_data <- iucn_shp
+    virion <- good_taxons
+    virion_taxonomy <- host_taxonomy
 
+    # find all the mammals we need to do this process for 
+    mams_binomials <- stringr::str_to_lower(unique(iucn_data$binomial))
+
+    # get a dataframe with the HostTaxID and the Host name for each mammal 
+    virion_taxonomy <- virion_taxonomy[which(
+        virion_taxonomy$HostClass == "mammalia"
+    ), c("HostTaxID", "Host")]
+
+    # which mam_binomials aren't in here? 
+    mams_binomials_in_virion <- mams_binomials[which(
+        mams_binomials %in% virion_taxonomy$Host
+    )]
+
+    virion_hash <- virion_taxonomy[]
 }
+
 
 #' extract_virus_associations
 #' @description 
-extract_virus_associations <- function(mammal, virion, edges_matrix) { 
+extract_virus_associations <- function(mammals, virion, edges_matrix) { 
 
 }
