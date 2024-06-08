@@ -12,6 +12,8 @@ library(dplyr)
 library(sf)
 library(microbenchmark)
 
+source(here::here("./fig1/00_raster_funs.R"))
+
 # pull updated data
 outdated <- FALSE
 if (outdated) {
@@ -62,18 +64,44 @@ edge_mat <- as.matrix(
     table(edges_complete$HostTaxID, edges_complete$VirusTaxID)
 )
 
+# Create viral diversity matrix ================================================
+
+mam_raster <- raster_extract(iucn_shp)
+data_ob <- init_data_ob(iucn_shp, mam_raster)
+data_ob[] <- 0 # set all of them to zero for now 
+
+# find all the mammals we need to do this process for 
+mams_binomials <- stringr::str_to_lower(unique(iucn_shp$binomial))
+virion_host_binomials <- unique(
+    good_taxons$Host[which(good_taxons$HostClass == "mammalia")]
+    )
+iucn_not_in_virion <- mams_binomials[which(
+    mams_binomials %notin% virion_host_binomials)]
+virion_not_in_iucn <- virion_host_binomials[which(
+    virion_host_binomials %notin% mams_binomials
+)]
+length(iucn_not_in_virion); length(mams_binomials); length(virion_not_in_iucn)
+
+# for now only deal with the taxa that are in both lists 
+mams <- mams_binomials %in% virion_host_binomials
+
+
 # IUCN data manipulation =======================================================
 mam_raster <- fasterize::raster(iucn_shp, res = 1 / 6)
 mammals <- fasterize::fasterize(iucn_shp, mam_raster, fun = "count")
 str(mammals)
-str(mammals@data@values)
+str(mammals@data)
 
 lophoocc <- fasterize::fasterize(iucn_shp[which(
     iucn_shp$binomial == "Lophostoma occidentalis")
 ,], mam_raster, fun = "any")
+str(lophoocc@data@values)
+lophoocc@data@values[which(!is.na(lophoocc@data@values))]
+
+
+
 par(mar = c(0, 0.5, 0, 0.5))
 fasterize::plot(mammals, axes = FALSE, box = FALSE)
-str(mam_raster)
 
 
 
