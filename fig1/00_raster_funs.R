@@ -33,6 +33,6 @@ init_data_ob <- function(iucn_data, mam_raster) {
 
 #' extract_virus_associations
 #' @description 
-extract_virus_associations <- function(mammal, virion) { 
+extract_virus_associations <- function(mammal, virion, edges_matrix) { 
     
 }

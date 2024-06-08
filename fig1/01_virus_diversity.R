@@ -24,11 +24,16 @@ if (outdated) {
         vir,
         here::here("./data/virion/viron.csv.gz")
     )
+    vroom::vroom_write(
+        vroom("https://github.com/viralemergence/virion/blob/main/Virion/Provenance.csv.gz", delim = ","),
+        here::here("./data/virion/provenence.csv.gz")
+    )
 }
 # read in
 vir <- vroom::vroom(here::here("./data/virion/viron.csv.gz"))
 edges <- vroom::vroom(here::here("./data/virion/Edgelist.csv"))
 iucn_shp <- sf::st_read(here::here("./data/IUCN/"))
+host_taxonomy
 
 #' NOTES
 #' Task at hand - take the host-virus matrix from virion and multiply it
@@ -51,7 +56,7 @@ good_taxons <- vir[which(vir$VirusNCBIResolved != FALSE &
     vir$HostNCBIResolved != FALSE & vir$HostFlagID != TRUE), ]
 # keep only the edges that are represented here
 edges <- edges[which(
-    edges$HostTaxID %in% good_taxons$HostTaxID,
+    edges$HostTaxID %in% good_taxons$HostTaxID &
     edges$VirusTaxID %in% good_taxons$VirusTaxID
 ), ]
 # get rid of AssocId
@@ -72,8 +77,10 @@ data_ob[] <- 0 # set all of them to zero for now
 
 # find all the mammals we need to do this process for 
 mams_binomials <- stringr::str_to_lower(unique(iucn_shp$binomial))
-virion_host_binomials <- unique(
-    good_taxons$Host[which(good_taxons$HostClass == "mammalia")]
+
+# get the virion taxa in terms of binomials
+virion_host_IDs <- unique(
+    good_taxons$HostTaxID[which(good_taxons$HostClass == "mammalia")]
     )
 iucn_not_in_virion <- mams_binomials[which(
     mams_binomials %notin% virion_host_binomials)]
@@ -83,8 +90,17 @@ virion_not_in_iucn <- virion_host_binomials[which(
 length(iucn_not_in_virion); length(mams_binomials); length(virion_not_in_iucn)
 
 # for now only deal with the taxa that are in both lists 
-mams <- mams_binomials %in% virion_host_binomials
-
+mams <- mams_binomials[which(mams_binomials %in% virion_host_binomials)]
+mams_df <- data.frame(
+    binomial = mams
+    ) %>% 
+    dplyr::left_join(
+        x = ., 
+        y = good_taxons[, c("Host", "HostTaxID")],
+        join_by(binomial == Host)
+    ) %>% unique()
+nrow(mams_df) == length(mams)
+mams_df[which(duplicated(mams_df$binomial)),] %>% arrange(binomial)
 
 # IUCN data manipulation =======================================================
 mam_raster <- fasterize::raster(iucn_shp, res = 1 / 6)
