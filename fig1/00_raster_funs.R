@@ -31,8 +31,14 @@ init_data_ob <- function(iucn_data, mam_raster) {
     return(data)
 }
 
+#' match_mammal_taxonomy
+#' @description 
+match_mammal_taxonomy <- function(iucn_data, virion_data, virion_taxonomy) { 
+
+}
+
 #' extract_virus_associations
 #' @description 
 extract_virus_associations <- function(mammal, virion, edges_matrix) { 
-    
+
 }

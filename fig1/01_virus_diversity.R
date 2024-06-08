@@ -33,7 +33,7 @@ if (outdated) {
 vir <- vroom::vroom(here::here("./data/virion/viron.csv.gz"))
 edges <- vroom::vroom(here::here("./data/virion/Edgelist.csv"))
 iucn_shp <- sf::st_read(here::here("./data/IUCN/"))
-host_taxonomy
+host_taxonomy <- vroom::vroom(here::here("./data/virion/TaxonomyHost.csv"))
 
 #' NOTES
 #' Task at hand - take the host-virus matrix from virion and multiply it
