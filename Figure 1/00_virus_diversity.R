@@ -65,8 +65,25 @@ edge_mat <- as.matrix(
 # IUCN data manipulation =======================================================
 mam_raster <- fasterize::raster(iucn_shp, res = 1 / 6)
 bench2 <- microbenchmark::microbenchmark(
-    mammals = mammal_raster <- fasterize(mammal_shapes, mammal_raster, fun = "sum"),
+    mammals = mam_raster <- fasterize(iucn_shp, mam_raster, fun = "sum"),
     times = 20, unit = "s"
 )
 par(mar = c(0, 0.5, 0, 0.5))
 fasterize::plot(mam_raster, axes = FALSE, box = FALSE)
+str(mam_raster)
+
+
+
+
+
+
+
+
+# playing around with an SF version of this ====================================
+test_shp <- iucn_shp[which(iucn_shp$binomial == "Lophostoma occidentalis"),]
+ggplot() + 
+geom_sf(data = test_shp, aes(fill = "presence"))
+
+
+ggplot() + 
+geom_sf(data = iucn_shp)
