@@ -64,12 +64,15 @@ edge_mat <- as.matrix(
 
 # IUCN data manipulation =======================================================
 mam_raster <- fasterize::raster(iucn_shp, res = 1 / 6)
-bench2 <- microbenchmark::microbenchmark(
-    mammals = mam_raster <- fasterize(iucn_shp, mam_raster, fun = "sum"),
-    times = 20, unit = "s"
-)
+mammals <- fasterize::fasterize(iucn_shp, mam_raster, fun = "count")
+str(mammals)
+str(mammals@data@values)
+
+lophoocc <- fasterize::fasterize(iucn_shp[which(
+    iucn_shp$binomial == "Lophostoma occidentalis")
+,], mam_raster, fun = "any")
 par(mar = c(0, 0.5, 0, 0.5))
-fasterize::plot(mam_raster, axes = FALSE, box = FALSE)
+fasterize::plot(mammals, axes = FALSE, box = FALSE)
 str(mam_raster)
 
 
