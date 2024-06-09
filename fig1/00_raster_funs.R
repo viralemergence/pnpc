@@ -41,10 +41,6 @@ init_data_ob <- function(iucn_data, mam_raster) {
 #'
 #' @return dataframe all the mammals that are to be quieried
 match_mammal_taxonomy <- function(iucn_data, virion, virion_taxonomy) { 
-    iucn_data <- iucn_shp
-    virion <- good_taxons
-    virion_taxonomy <- host_taxonomy
-
     # find all the mammals we need to do this process for 
     mams_binomials <- stringr::str_to_lower(unique(iucn_data$binomial))
 
@@ -65,9 +61,16 @@ match_mammal_taxonomy <- function(iucn_data, virion, virion_taxonomy) {
     return(virion_hash)
 }
 
-
 #' extract_virus_associations
-#' @description 
-extract_virus_associations <- function(mammals, virion, edges_matrix) { 
-
+#' @description For a given mammal host name and taxonomic ID, find the 
+#' associated viruses (number and taxonomy) from the virion database 
+#' @param mammal 1 row dataframe that is the HostTaxId and the Host name of the 
+#' mammal at hand
+#' @param edges_matrix the matrix of edges that we can use the TaxIDs to
+#' identify 
+#' @return a vector of the virus association TaxIDs
+extract_virus_associations <- function(mammal, edges_matrix) { 
+    rownames(edges_matrix[which(
+        edges_matrix[mammal, ]
+    )])
 }

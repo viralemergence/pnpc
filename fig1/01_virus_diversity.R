@@ -63,14 +63,11 @@ edges <- edges[which(
     edges$VirusTaxID %in% good_taxons$VirusTaxID
 ), ]
 # get rid of AssocId
-edges_complete <- edges %>%
+edges_matrix <- edges %>%
     dplyr::select(-AssocID) %>%
-    dplyr::mutate(edge = 1)
-# tidyr::complete(., HostTaxID, VirusTaxID)
-edges_complete$edge[which(is.na(edges_complete$edge))] <- 0
-edge_mat <- as.matrix(
-    table(edges_complete$HostTaxID, edges_complete$VirusTaxID)
-)
+    dplyr::mutate(edge = 1) %>% 
+    tidyr::complete(., HostTaxID, VirusTaxID, fill = list(edge = 0)) %>% 
+    tidyr::pivot_wider(names_from = VirusTaxID, values_from = edge)
 
 # Create viral diversity matrix ================================================
 
