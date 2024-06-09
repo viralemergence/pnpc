@@ -81,7 +81,12 @@ data_ob[] <- 0 # set all of them to zero for now
 # find all the mammals we need to do this process for 
 mams_binomials <- stringr::str_to_lower(unique(iucn_shp$binomial))
 
-all(rownames(edge_mat) %in% host_taxonomy$HostTaxID)
+# get a dataframe of all the hosts that we have data for from both the IUCN and
+# also virion 
+virion_mams <- match_mammal_taxonomy(
+    iucn_data = iucn_shp, 
+    virion = good_taxons, 
+    virion_taxonomy = host_taxonomy)
 
 
 

@@ -39,8 +39,7 @@ init_data_ob <- function(iucn_data, mam_raster) {
 #' @param virion dataframe. The virion dataframe 
 #' @param virion_taxonomy dataframe. The HostTaxonomy of the virion database
 #'
-#' @return character vector of all the mammals that are to be quieried with 
-#' a hash / match table
+#' @return dataframe all the mammals that are to be quieried
 match_mammal_taxonomy <- function(iucn_data, virion, virion_taxonomy) { 
     iucn_data <- iucn_shp
     virion <- good_taxons
@@ -59,7 +58,11 @@ match_mammal_taxonomy <- function(iucn_data, virion, virion_taxonomy) {
         mams_binomials %in% virion_taxonomy$Host
     )]
 
-    virion_hash <- virion_taxonomy[]
+    # keep just the ones that are in both 
+    virion_hash <- virion_taxonomy[which(
+        virion_taxonomy$Host %in% mams_binomials_in_virion), ]
+
+    return(virion_hash)
 }
 
 
