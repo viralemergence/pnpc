@@ -67,8 +67,10 @@ edges_matrix <- edges %>%
     dplyr::select(-AssocID) %>%
     dplyr::mutate(edge = 1) %>% 
     tidyr::complete(., HostTaxID, VirusTaxID, fill = list(edge = 0)) %>% 
-    tidyr::pivot_wider(names_from = VirusTaxID, values_from = edge)
-
+    tidyr::pivot_wider(names_from = VirusTaxID, values_from = edge) %>% 
+    tibble::column_to_rownames(., var = "HostTaxID") %>% 
+    as.matrix()
+    
 # Create viral diversity matrix ================================================
 
 mam_raster <- raster_extract(iucn_shp) # this is the full extent we want
