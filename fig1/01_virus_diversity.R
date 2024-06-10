@@ -88,48 +88,20 @@ virion_mams <- match_mammal_taxonomy(
     virion_taxonomy = host_taxonomy
 )
 
+# create empty data structures to populate 
+virus_counts <- vector(length(data_ob), mode = "numeric")
+mammal_counts <- vector(length(data_ob), mode = "numeric")
+virus_ids <- vector(length(data_ob), mode = "list")
+mammal_ids <- vector(length(data_ob), mode = "list")
 
 
 
+mammal <- as.character(virion_mams$HostTaxID[10])
+viruses <- extract_virus_associations(mammal, edges_matrix)
 
-
-
-
-# get the virion taxa in terms of binomials
-virion_host_IDs <- unique(
-    good_taxons$HostTaxID[which(good_taxons$HostClass == "mammalia")]
-    )
-iucn_not_in_virion <- mams_binomials[which(
-    mams_binomials %notin% virion_host_binomials)]
-virion_not_in_iucn <- virion_host_binomials[which(
-    virion_host_binomials %notin% mams_binomials
-)]
-length(iucn_not_in_virion); length(mams_binomials); length(virion_not_in_iucn)
-
-# for now only deal with the taxa that are in both lists 
-mams <- mams_binomials[which(mams_binomials %in% virion_host_binomials)]
-mams_df <- data.frame(
-    binomial = mams
-    ) %>% 
-    dplyr::left_join(
-        x = ., 
-        y = good_taxons[, c("Host", "HostTaxID")],
-        join_by(binomial == Host)
-    ) %>% unique()
-nrow(mams_df) == length(mams)
-mams_df[which(duplicated(mams_df$binomial)),] %>% arrange(binomial)
 
 # IUCN data manipulation =======================================================
-mam_raster <- fasterize::raster(iucn_shp, res = 1 / 6)
-mammals <- fasterize::fasterize(iucn_shp, mam_raster, fun = "count")
-str(mammals)
-str(mammals@data)
 
-lophoocc <- fasterize::fasterize(iucn_shp[which(
-    iucn_shp$binomial == "Lophostoma occidentalis")
-,], mam_raster, fun = "any")
-str(lophoocc@data@values)
-lophoocc@data@values[which(!is.na(lophoocc@data@values))]
 
 
 

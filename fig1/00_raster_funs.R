@@ -73,5 +73,3 @@ extract_virus_associations <- function(mammal, edges_matrix) {
     return(names(edges_matrix[mammal, ][which(
             edges_matrix[mammal, ] > 0)]))
 }
-
-
