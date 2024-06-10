@@ -70,7 +70,7 @@ edges_matrix <- edges %>%
     tidyr::pivot_wider(names_from = VirusTaxID, values_from = edge) %>% 
     tibble::column_to_rownames(., var = "HostTaxID") %>% 
     as.matrix()
-    
+
 # Create viral diversity matrix ================================================
 
 mam_raster <- raster_extract(iucn_shp) # this is the full extent we want
@@ -85,7 +85,8 @@ mams_binomials <- stringr::str_to_lower(unique(iucn_shp$binomial))
 virion_mams <- match_mammal_taxonomy(
     iucn_data = iucn_shp, 
     virion = good_taxons, 
-    virion_taxonomy = host_taxonomy)
+    virion_taxonomy = host_taxonomy
+)
 
 
 

@@ -70,7 +70,8 @@ match_mammal_taxonomy <- function(iucn_data, virion, virion_taxonomy) {
 #' identify 
 #' @return a vector of the virus association TaxIDs
 extract_virus_associations <- function(mammal, edges_matrix) { 
-    rownames(edges_matrix[which(
-        edges_matrix[mammal, ]
-    )])
+    return(names(edges_matrix[mammal, ][which(
+            edges_matrix[mammal, ] > 0)]))
 }
+
+
