@@ -1,6 +1,10 @@
 # mac shit
 **.DS_Store
 
+# the big IUCN data 
+/data/IUCN/
+/data/virion/Virion.csv
+
 # History files
 .Rhistory
 .Rapp.history
