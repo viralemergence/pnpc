@@ -73,3 +73,37 @@ extract_virus_associations <- function(mammal, edges_matrix) {
     return(names(edges_matrix[mammal, ][which(
             edges_matrix[mammal, ] > 0)]))
 }
+
+#' find_populated_cells
+#' @description Figure out which raster cells a given mammal is actually present
+#' in 
+#' @param mammal character of the mammal taxonomic ID
+#' @param iucn_data SF_MULTIPOLYGON. The iucn data that comes in shapefile form
+#' from the IUCN itself
+#' @param mam_raster Formal class 'RasterLayer' [package "raster"]. The raster
+#' which includes the count data of all the mammals in each raster cell.
+#' @return numeric list of raster indices
+find_populated_cells <- function(mammal, iucn_data, mam_raster, virion_mams) {
+    current <- fasterize::fasterize(
+        iucn_data[which(iucn_data$binomial == virion_mams$Host[which(
+            virion_mams$HostTaxID == as.numeric(mammal))]),], 
+        mam_raster, 
+        fun = "count")
+    data <- current@data@values # keep only values not the whole object
+    raster_ids <- which(!is.na(data))
+
+    return(raster_ids)
+}
+
+# lophoocc <- fasterize::fasterize(iucn_shp[which(
+#     iucn_shp$binomial == "Lophostoma occidentalis")
+# ,], mam_raster, fun = "count")
+# str(lophoocc@data@values)
+# lophoocc@data@values[which(!is.na(lophoocc@data@values))]
+
+# par(mar = c(0, 0.5, 0, 0.5))
+# fasterize::plot(current, axes = FALSE, box = FALSE)
+
+# test <- iucn_data[which(iucn_data$binomial == virion_mams$Host[which(
+#             virion_mams$HostTaxID == as.numeric(mammal))]),]
+# length(unique(test$binomial))

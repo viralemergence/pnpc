@@ -88,6 +88,10 @@ virion_mams <- match_mammal_taxonomy(
     virion_taxonomy = host_taxonomy
 )
 
+# make sure the IUCN shapefile uses the all lower case form of the data
+iucn_data <- iucn_shp %>% 
+dplyr::mutate(binomial = stringr::str_to_lower(iucn_shp$binomial))
+
 # create empty data structures to populate 
 virus_counts <- vector(length(data_ob), mode = "numeric")
 mammal_counts <- vector(length(data_ob), mode = "numeric")
@@ -95,9 +99,14 @@ virus_ids <- vector(length(data_ob), mode = "list")
 mammal_ids <- vector(length(data_ob), mode = "list")
 
 
-
+# go through each mammal and populate the data structures 
 mammal <- as.character(virion_mams$HostTaxID[10])
 viruses <- extract_virus_associations(mammal, edges_matrix)
+for(i in seq_len(virion_mams)) {
+    # get the mammal 
+    mammal <- as.character(virion_mams$HostTaxID[i])
+
+}
 
 
 # IUCN data manipulation =======================================================
