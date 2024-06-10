@@ -95,21 +95,29 @@ dplyr::mutate(binomial = stringr::str_to_lower(iucn_shp$binomial))
 # create empty data structures to populate 
 virus_counts <- vector(length(data_ob), mode = "numeric")
 mammal_counts <- vector(length(data_ob), mode = "numeric")
-virus_ids <- vector(length(data_ob), mode = "list")
-mammal_ids <- vector(length(data_ob), mode = "list")
-
+virus_ids <- rep_len(list(character()), length(data_ob))
+mammal_ids <- rep_len(list(character()), length(data_ob))
 
 # go through each mammal and populate the data structures 
-mammal <- as.character(virion_mams$HostTaxID[10])
-viruses <- extract_virus_associations(mammal, edges_matrix)
 for(i in seq_len(virion_mams)) {
     # get the mammal 
     mammal <- as.character(virion_mams$HostTaxID[i])
-
+    # figure out which cells it's present in 
+    cells <- find_populated_cells(
+        mammal = mammal, 
+        iucn_data = iucn_data, 
+        mam_raster = mam_raster, 
+        virion_mams = virion_mams
+    )
+    # find the associated viruses
+    viruses <- extract_virus_associations(mammal, edges_matrix)
+    # add the mammal ID to the appropriate cells, and also 
+    for(cell in cells){
+        mammal_ids[[cell]] <- unique(c(mammal_ids[[cell]], mammal))
+        virus_ids[[cell]] <- unique(c(virus_ids[[cell]], viruses))
+    }
 }
 
-
-# IUCN data manipulation =======================================================
 
 
 
@@ -117,18 +125,3 @@ for(i in seq_len(virion_mams)) {
 par(mar = c(0, 0.5, 0, 0.5))
 fasterize::plot(mammals, axes = FALSE, box = FALSE)
 
-
-
-
-
-
-
-
-# playing around with an SF version of this ====================================
-test_shp <- iucn_shp[which(iucn_shp$binomial == "Lophostoma occidentalis"),]
-ggplot() + 
-geom_sf(data = test_shp, aes(fill = "presence"))
-
-
-ggplot() + 
-geom_sf(data = iucn_shp)
