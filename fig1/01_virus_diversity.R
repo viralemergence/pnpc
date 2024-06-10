@@ -79,7 +79,8 @@ edges_matrix <- edges %>%
 # Create viral diversity matrix ================================================
 
 mam_raster <- raster_extract(iucn_shp) # this is the full extent we want
-data_ob <- init_data_ob(iucn_shp, mam_raster) # the data object
+mammals <- init_data_ob(iucn_shp, mam_raster) # the data object
+data_ob <- mammals@data@values
 data_ob[] <- 0 # set all of them to zero for now
 
 # find all the mammals we need to do this process for
@@ -133,10 +134,13 @@ for (i in seq_len(nrow(virion_mams))) {
         print(i)
     }
 }
-x <- (good_taxons[which(good_taxons$Host == "sorex hoyi"), ])
+for (cell in seq_len(length(data_ob))) {
+    virus_counts[cell] <- length(virus_ids[[cell]])
+    mammal_counts[cell] <- length(mammal_ids[[cell]])
+}
 
-names(good_taxons)
-
+# put the values back into the raster and plot =================================
+mammals@data@values <- virus_counts
 
 par(mar = c(0, 0.5, 0, 0.5))
-fasterize::plot(mammals, axes = FALSE, box = FALSE)
+fasterize::plot(mam_raster, axes = FALSE, box = FALSE)

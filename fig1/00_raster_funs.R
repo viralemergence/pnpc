@@ -24,11 +24,11 @@ raster_extract <- function(iucn_data) {
 #' from the IUCN itself
 #' @param mam_raster Formal class 'RasterLayer' [package "raster"]. The raster
 #' which includes the count data of all the mammals in each raster cell.
-#' @return raster data values that is just a numeric vector
+#' @return mammals object that can be plotted
 init_data_ob <- function(iucn_data, mam_raster) {
     mammals <- fasterize::fasterize(iucn_shp, mam_raster, fun = "count")
-    data <- mammals@data@values # keep only values not the whole object
-    return(data)
+    # data <- mammals@data@values # keep only values not the whole object
+    return(mammals)
 }
 
 #' match_mammal_taxonomy
