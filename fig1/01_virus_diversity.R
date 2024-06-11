@@ -143,4 +143,4 @@ for (cell in seq_len(length(data_ob))) {
 mammals@data@values <- virus_counts
 
 par(mar = c(0, 0.5, 0, 0.5))
-fasterize::plot(mam_raster, axes = FALSE, box = FALSE)
+fasterize::plot(mammals, axes = FALSE, box = FALSE)
