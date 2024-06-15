@@ -14,6 +14,8 @@ library(qs)
 library(terra)
 library(tidyterra)
 library(viridis)
+library(geodata)
+wrld <- world(path = ".")
 
 source(here::here("./fig1/00_raster_funs.R"))
 
@@ -155,11 +157,16 @@ for (cell in seq_len(length(data_ob))) {
 # put the values back into the raster and plot =================================
 
 ## plot standard map of just viral richness ====================================
-mammals@data@values <- virus_counts
+mammals_viral_rich <- mammals
+mammals_viral_rich@data@values <- virus_counts
+ggplot() +
+    geom_sf(data = world)
 p_viral_rich <- ggplot() +
-    geom_spatraster(data = terra::rast(mammals)) +
+    # geom_sf(world)
+    geom_spatraster(data = terra::rast(mammals_viral_rich)) +
     theme_void() +
     scale_fill_viridis(name = "Viral Diversity", option = "C")
+# scale_fill_gradient(low = "white", high = "yellow")
 ggsave(
     here::here("./fig1/figs/viral-richness.png"),
     p_viral_rich
@@ -169,17 +176,19 @@ ggsave(
 
 # do an NDVI style map - (h-v)/(h+v)
 viral_NDVI <- vector(length(data_ob), mode = "numeric") # empty
+scale_mammal_counts <- range_01(scale_mammal_counts)
+scale_virus_counts <- range_01(virus_counts)
 for (i in seq_len(length(data_ob))) {
     viral_NDVI[i] <-
-        (mammal_counts[i] - virus_counts[i]) /
-            (mammal_counts[i] + virus_counts[i])
+        (scale_mammal_counts[i] - scale_virus_counts[i]) /
+            (scale_mammal_counts[i] + scale_virus_counts[i])
 }
 mammals@data@values <- viral_NDVI
 
 p_viral_ndvi <- ggplot() +
     geom_spatraster(data = terra::rast(mammals)) +
     theme_void() +
-    scale_fill_gradient("Viral NDVI", low = "white", high = "blue")
+    scale_fill_gradient2("Viral NDVI", low = "#c10707", high = "#850bd1")
 ggsave(
     here::here("./fig1/figs/viral-ndvi.png"),
     p_viral_ndvi
