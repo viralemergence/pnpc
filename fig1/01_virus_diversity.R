@@ -13,6 +13,7 @@ library(sf)
 library(qs)
 library(terra)
 library(tidyterra)
+library(viridis)
 
 source(here::here("./fig1/00_raster_funs.R"))
 
@@ -153,8 +154,18 @@ for (cell in seq_len(length(data_ob))) {
 
 # put the values back into the raster and plot =================================
 
-## viral ndvi plot =============================================================
+## plot standard map of just viral richness ====================================
 mammals@data@values <- virus_counts
+p_viral_rich <- ggplot() +
+    geom_spatraster(data = terra::rast(mammals)) +
+    theme_void() +
+    scale_fill_viridis(name = "Viral Diversity", option = "C")
+ggsave(
+    here::here("./fig1/figs/viral-richness.png"),
+    p_viral_rich
+)
+
+## viral ndvi plot =============================================================
 
 # do an NDVI style map - (h-v)/(h+v)
 viral_NDVI <- vector(length(data_ob), mode = "numeric") # empty
@@ -165,8 +176,6 @@ for (i in seq_len(length(data_ob))) {
 }
 mammals@data@values <- viral_NDVI
 
-
-
 p_viral_ndvi <- ggplot() +
     geom_spatraster(data = terra::rast(mammals)) +
     theme_void() +
@@ -176,9 +185,7 @@ ggsave(
     p_viral_ndvi
 )
 
-fasterize::plot(mammals, axes = FALSE, box = FALSE)
-
-
+## inset of expected viral diversity ===========================================
 
 
 
