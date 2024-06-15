@@ -10,6 +10,9 @@ library(fasterize)
 library(magrittr)
 library(dplyr)
 library(sf)
+library(qs)
+library(terra)
+library(tidyterra)
 
 source(here::here("./fig1/00_raster_funs.R"))
 
@@ -106,47 +109,82 @@ virus_ids <- rep_len(list(character()), length(data_ob))
 mammal_ids <- rep_len(list(character()), length(data_ob))
 
 # go through each mammal and populate the data structures
-for (i in seq_len(nrow(virion_mams))) {
-    # get the mammal
-    mammal <- as.character(virion_mams$HostTaxID[i])
-    if (as.numeric(mammal) %notin% edges$HostTaxID) {
-        next
+if (count_outdated) {
+    for (i in seq_len(nrow(virion_mams))) {
+        # get the mammal
+        mammal <- as.character(virion_mams$HostTaxID[i])
+        if (as.numeric(mammal) %notin% edges$HostTaxID) {
+            next
+        }
+        # figure out which cells it's present in
+        cells <- find_populated_cells(
+            mammal = mammal,
+            iucn_data = iucn_data,
+            mam_raster = mam_raster,
+            virion_mams = virion_mams
+        )
+        # find the associated viruses
+        viruses <- extract_virus_associations(
+            mammal = mammal,
+            edges_matrix = edges_matrix
+        )
+        # print(length(viruses))
+        # add the mammal ID to the appropriate cells, and also
+        for (cell in cells) {
+            mammal_ids[[cell]] <- unique(c(mammal_ids[[cell]], mammal))
+            virus_ids[[cell]] <- unique(c(virus_ids[[cell]], viruses))
+        }
+        if (i %% 100 == 0) {
+            print(i)
+        }
     }
-    # figure out which cells it's present in
-    cells <- find_populated_cells(
-        mammal = mammal,
-        iucn_data = iucn_data,
-        mam_raster = mam_raster,
-        virion_mams = virion_mams
-    )
-    # find the associated viruses
-    viruses <- extract_virus_associations(
-        mammal = mammal,
-        edges_matrix = edges_matrix
-    )
-    # print(length(viruses))
-    # add the mammal ID to the appropriate cells, and also
-    for (cell in cells) {
-        mammal_ids[[cell]] <- unique(c(mammal_ids[[cell]], mammal))
-        virus_ids[[cell]] <- unique(c(virus_ids[[cell]], viruses))
-    }
-    if (i %% 100 == 0) {
-        print(i)
-    }
+    # save objects
+    qs::qsave(mammal_counts, here::here("./data/outputs/mammal-counts.qs"))
+    qs::qsave(virus_counts, here::here("./data/outputs/virus-counts.qs"))
+} else {
+    mammal_counts <- qs::qread(here::here("./data/outputs/mammal-counts.qs"))
+    virus_counts <- qs::qread(here::here("./data/outputs/virus-counts.qs"))
 }
+
 for (cell in seq_len(length(data_ob))) {
     virus_counts[cell] <- length(virus_ids[[cell]])
     mammal_counts[cell] <- length(mammal_ids[[cell]])
 }
 
 # put the values back into the raster and plot =================================
+
+## viral ndvi plot =============================================================
 mammals@data@values <- virus_counts
 
-par(mar = c(0, 0.5, 0, 0.5))
+# do an NDVI style map - (h-v)/(h+v)
+viral_NDVI <- vector(length(data_ob), mode = "numeric") # empty
+for (i in seq_len(length(data_ob))) {
+    viral_NDVI[i] <-
+        (mammal_counts[i] - virus_counts[i]) /
+            (mammal_counts[i] + virus_counts[i])
+}
+mammals@data@values <- viral_NDVI
+
+
+
+p_viral_ndvi <- ggplot() +
+    geom_spatraster(data = terra::rast(mammals)) +
+    theme_void() +
+    scale_fill_gradient("Viral NDVI", low = "white", high = "blue")
+ggsave(
+    here::here("./fig1/figs/viral-ndvi.png"),
+    p_viral_ndvi
+)
+
 fasterize::plot(mammals, axes = FALSE, box = FALSE)
 
 
-# do an NDVI style map - (h-v)/(h+v)
+
+
+
+
+
+
 
 
 # idea 1: inset map in the corner that is green-purple more/less viruses than
