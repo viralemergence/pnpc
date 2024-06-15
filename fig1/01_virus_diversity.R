@@ -14,7 +14,7 @@ library(sf)
 source(here::here("./fig1/00_raster_funs.R"))
 
 # pull updated data
-outdated <- TRUE
+outdated <- FALSE
 if (outdated) {
     virion_path <- paste0(
         "https://github.com/viralemergence/virion/blob/",
@@ -130,7 +130,7 @@ for (i in seq_len(nrow(virion_mams))) {
         mammal_ids[[cell]] <- unique(c(mammal_ids[[cell]], mammal))
         virus_ids[[cell]] <- unique(c(virus_ids[[cell]], viruses))
     }
-    if (i %% 1000 == 0) {
+    if (i %% 100 == 0) {
         print(i)
     }
 }
@@ -144,3 +144,12 @@ mammals@data@values <- virus_counts
 
 par(mar = c(0, 0.5, 0, 0.5))
 fasterize::plot(mammals, axes = FALSE, box = FALSE)
+
+
+# do an NDVI style map - (h-v)/(h+v)
+
+
+# idea 1: inset map in the corner that is green-purple more/less viruses than
+# expected based on host richness
+
+# idea 2: the same setup (main map, inset) but for zoonotic host richness
