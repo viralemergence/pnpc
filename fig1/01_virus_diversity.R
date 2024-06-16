@@ -196,13 +196,7 @@ ggsave(
 
 ## inset of expected viral diversity ===========================================
 
-
-
-
-
-
-
-
+# OLD IDEAS:
 # idea 1: inset map in the corner that is green-purple more/less viruses than
 # expected based on host richness
 
