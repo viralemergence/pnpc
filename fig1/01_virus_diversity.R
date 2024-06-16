@@ -10,11 +10,17 @@ library(fasterize)
 library(magrittr)
 library(dplyr)
 library(sf)
+library(qs)
+library(terra)
+library(tidyterra)
+library(viridis)
+library(geodata)
+wrld <- world(path = ".")
 
 source(here::here("./fig1/00_raster_funs.R"))
 
 # pull updated data
-outdated <- TRUE
+outdated <- FALSE
 if (outdated) {
     virion_path <- paste0(
         "https://github.com/viralemergence/virion/blob/",
@@ -106,41 +112,92 @@ virus_ids <- rep_len(list(character()), length(data_ob))
 mammal_ids <- rep_len(list(character()), length(data_ob))
 
 # go through each mammal and populate the data structures
-for (i in seq_len(nrow(virion_mams))) {
-    # get the mammal
-    mammal <- as.character(virion_mams$HostTaxID[i])
-    if (as.numeric(mammal) %notin% edges$HostTaxID) {
-        next
+if (count_outdated) {
+    for (i in seq_len(nrow(virion_mams))) {
+        # get the mammal
+        mammal <- as.character(virion_mams$HostTaxID[i])
+        if (as.numeric(mammal) %notin% edges$HostTaxID) {
+            next
+        }
+        # figure out which cells it's present in
+        cells <- find_populated_cells(
+            mammal = mammal,
+            iucn_data = iucn_data,
+            mam_raster = mam_raster,
+            virion_mams = virion_mams
+        )
+        # find the associated viruses
+        viruses <- extract_virus_associations(
+            mammal = mammal,
+            edges_matrix = edges_matrix
+        )
+        # print(length(viruses))
+        # add the mammal ID to the appropriate cells, and also
+        for (cell in cells) {
+            mammal_ids[[cell]] <- unique(c(mammal_ids[[cell]], mammal))
+            virus_ids[[cell]] <- unique(c(virus_ids[[cell]], viruses))
+        }
+        if (i %% 100 == 0) {
+            print(i)
+        }
     }
-    # figure out which cells it's present in
-    cells <- find_populated_cells(
-        mammal = mammal,
-        iucn_data = iucn_data,
-        mam_raster = mam_raster,
-        virion_mams = virion_mams
-    )
-    # find the associated viruses
-    viruses <- extract_virus_associations(
-        mammal = mammal,
-        edges_matrix = edges_matrix
-    )
-    # print(length(viruses))
-    # add the mammal ID to the appropriate cells, and also
-    for (cell in cells) {
-        mammal_ids[[cell]] <- unique(c(mammal_ids[[cell]], mammal))
-        virus_ids[[cell]] <- unique(c(virus_ids[[cell]], viruses))
-    }
-    if (i %% 1000 == 0) {
-        print(i)
-    }
+    # save objects
+    qs::qsave(mammal_counts, here::here("./data/outputs/mammal-counts.qs"))
+    qs::qsave(virus_counts, here::here("./data/outputs/virus-counts.qs"))
+} else {
+    mammal_counts <- qs::qread(here::here("./data/outputs/mammal-counts.qs"))
+    virus_counts <- qs::qread(here::here("./data/outputs/virus-counts.qs"))
 }
+
 for (cell in seq_len(length(data_ob))) {
     virus_counts[cell] <- length(virus_ids[[cell]])
     mammal_counts[cell] <- length(mammal_ids[[cell]])
 }
 
 # put the values back into the raster and plot =================================
-mammals@data@values <- virus_counts
 
-par(mar = c(0, 0.5, 0, 0.5))
-fasterize::plot(mammals, axes = FALSE, box = FALSE)
+## plot standard map of just viral richness ====================================
+mammals_viral_rich <- mammals
+mammals_viral_rich@data@values <- virus_counts
+ggplot() +
+    geom_sf(data = world)
+p_viral_rich <- ggplot() +
+    # geom_sf(world)
+    geom_spatraster(data = terra::rast(mammals_viral_rich)) +
+    theme_void() +
+    scale_fill_viridis(name = "Viral Diversity", option = "C")
+# scale_fill_gradient(low = "white", high = "yellow")
+ggsave(
+    here::here("./fig1/figs/viral-richness.png"),
+    p_viral_rich
+)
+
+## viral ndvi plot =============================================================
+
+# do an NDVI style map - (h-v)/(h+v)
+viral_NDVI <- vector(length(data_ob), mode = "numeric") # empty
+scale_mammal_counts <- range_01(scale_mammal_counts)
+scale_virus_counts <- range_01(virus_counts)
+for (i in seq_len(length(data_ob))) {
+    viral_NDVI[i] <-
+        (scale_mammal_counts[i] - scale_virus_counts[i]) /
+            (scale_mammal_counts[i] + scale_virus_counts[i])
+}
+mammals@data@values <- viral_NDVI
+
+p_viral_ndvi <- ggplot() +
+    geom_spatraster(data = terra::rast(mammals)) +
+    theme_void() +
+    scale_fill_gradient2("Viral NDVI", low = "#c10707", high = "#850bd1")
+ggsave(
+    here::here("./fig1/figs/viral-ndvi.png"),
+    p_viral_ndvi
+)
+
+## inset of expected viral diversity ===========================================
+
+# OLD IDEAS:
+# idea 1: inset map in the corner that is green-purple more/less viruses than
+# expected based on host richness
+
+# idea 2: the same setup (main map, inset) but for zoonotic host richness

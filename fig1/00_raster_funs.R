@@ -4,6 +4,10 @@
 
 `%notin%` <- Negate(`%in%`)
 
+range_01 <- function(x) {
+    (x - min(x)) / (max(x) - min(x))
+}
+
 #' raster_extract
 #' @description Gets the raster itself from the whole of the IUCN data and
 #' returns it in useful form for the extraction of each species values
