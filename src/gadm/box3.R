@@ -88,7 +88,7 @@ orderCounts %>%
   theme(
     legend.position = "top",
     legend.title = element_blank(),
-    axis.text.x = element_text(angle = 45, hjust = 1, face = "italic"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
     axis.title.x = element_blank(),
     legend.margin = margin(0, 0, 0, 0),
     legend.box.margin = margin(2, 2, 2, 2)
@@ -151,12 +151,12 @@ g22 <- ggplot() +
   ) +
   scale_fill_gradientn(
     colors = met.brewer("Morgenstern"),
-    name = "Proportion with  \nno known viruses  ",
+    name = "Proportion of species  \nwith no known viruses  ",
     breaks = c(0, 0.25, 0.50, 0.75, 1),
     labels = c("0.0", "0.25", "0.50", "0.75", "1.00"),
     limits = c(0, 1)
   )
-ggplot2::ggsave(here::here("./src/gadm/figs/just-map.png"), g22)
+ggplot2::ggsave(here::here("./figs/box-3/just-map.png"), g22)
 ## Assembly
 
 # g1 + g2 + plot_layout(widths = c(1, 3))
