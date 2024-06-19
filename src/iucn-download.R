@@ -1,4 +1,4 @@
-#' DESCRIPTION: The common tasks to get all data needed to create figures here
+#' DESCRIPTION: donwnloading the files for the IUCN data
 #' AUTHOR: Cole Brookson
 #' DATE: 19 June 2024
 

@@ -156,4 +156,4 @@ ggplot2::ggsave(here::here("./src/gadm/figs/just-map.png"), g22)
 
 # cole version
 p <- g1 + g22 + plot_layout(widths = c(-1, 2))
-ggplot2::ggsave(here::here("./src/gadm/figs/side-by-side.png"), p)
+ggplot2::ggsave(here::here("./figs/box-3/side-by-side.png"), p)
