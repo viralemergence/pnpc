@@ -76,7 +76,7 @@ orderCounts %>%
 ## DB VERSION
 orderCounts %>%
   filter(order_ %in% top10orders) %>%
-  mutate(order_ = factor(order_, levels = rev(top10orders))) %>%
+  mutate(order_ = factor(order_, levels = top10orders)) %>%
   rename(count = n) %>%
   mutate(anyViruses = factor(anyViruses, levels = c("0", "1"))) %>%
   ggplot(aes(fill = anyViruses, y = count, x = `order_`)) +
