@@ -11,7 +11,7 @@
 #' they don't, then download and unzip
 #' the download link created with: https://sites.google.com/site/gdocs2direct/
 if (file.exists(here::here("./data/IUCN/"))) {
-    print("Files present OR other files are in the same location")
+    print("IUCN files present OR other files are in the same location")
 } else {
     print("You need the IUCN files!! They're getting downloaded now")
 
@@ -28,7 +28,7 @@ if (file.exists(here::here("./data/IUCN/"))) {
     )
     utils::unzip(
         here::here("./data/IUCN.zip"),
-        exdir = here::here("./data/IUCN/")
+        exdir = here::here("./data/"),
         overwrite = TRUE
     )
 }

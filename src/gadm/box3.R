@@ -12,8 +12,26 @@ library(patchwork)
 library(MetBrewer)
 library(ggpubr)
 
-vir <- vroom("Documents/Github/virion/virion/virion.csv.gz")
-iucn <- read_sf("Dropbox/CurrentIUCN/MAMMALS.shp")
+vir <- vroom::vroom(here::here("./data/virion/virion-zipped.csv.gz"))
+# need to make sure we're all using the same IUCN
+tryCatch(
+  {
+    iucn <- sf::read_sf(here::here("./data/IUCN/"))
+  },
+  warning = function(w) {
+    print() # dummy warning function to suppress the output of warnings
+  },
+  error = function(err) {
+    print("Could not read data from current directory, attempting download...")
+    tryCatch({
+      source(here::here("./__main.R"))
+    })
+    warning <- function(w) {
+      print() # dummy warning function to suppress the output of warnings
+    }
+  }
+)
+
 
 # IUCN data ====================================================================
 
