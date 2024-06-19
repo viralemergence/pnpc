@@ -97,7 +97,7 @@ orderCounts %>%
   #      legend.title = element_blank(),
   #      legend.box.background = element_rect(colour = "black")) +
   scale_fill_manual(
-    values = c("#d3d3d3b4", "#a65dd3"),
+    values = c("#d3d3d3b4", met.brewer("Signac")[8]),
     labels = c("No viruses known", "Viruses recorded")
   ) -> g1
 
@@ -122,7 +122,6 @@ scaleddiffdf <- raster::as.data.frame(propno, xy = TRUE)
 #   ggplot(aes(x = x, y = y, fill = layer)) +
 #   geom_raster() + coord_sf() +
 #   theme_void() +
-#   scale_fill_gradientn(colors = met.brewer("Morgenstern"), name = 'Proportion with \nno known viruses') -> g2
 
 ## DB VERSION
 scaleddiffdf %>%
@@ -167,6 +166,7 @@ ggplot2::ggsave(here::here("./src/gadm/figs/just-map.png"), g22)
 
 # cole version
 p <- g1 + g22 + plot_layout(widths = c(-1, 2))
+p
 ggplot2::ggsave(here::here("./figs/box-3/side-by-side.png"), p,
   width = 12, height = 10
 )
