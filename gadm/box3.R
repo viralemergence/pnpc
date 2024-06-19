@@ -5,6 +5,7 @@ library(vroom)
 library(fasterize)
 library(patchwork)
 library(MetBrewer)
+library(ggpubr)
 
 vir <- vroom("Documents/Github/virion/virion/virion.csv.gz")
 iucn <- read_sf("Dropbox/CurrentIUCN/MAMMALS.shp")
@@ -31,6 +32,23 @@ orderCounts %>%
   arrange(-n) %>%
   pull(order_) -> top10orders
 
+# orderCounts %>%
+#   filter(order_ %in% top10orders) %>%
+#   mutate(order_ = factor(order_, levels = rev(top10orders))) %>%
+#   rename(count = n) %>%
+#   mutate(anyViruses = factor(anyViruses, levels = c('0', '1'))) %>%
+#   ggplot(aes(fill=anyViruses, y = count, x = `order_`)) + 
+#   geom_bar(position="stack", stat="identity") +
+#   coord_flip() + 
+#   xlab('Mammal orders (top 10 by descending species richness)') + 
+#   ylab('Number of species') + 
+#   theme_bw() + 
+#   theme(legend.position = c(0.6, 0.1), 
+#         legend.title = element_blank(),
+#         legend.box.background = element_rect(colour = "black")) + 
+#   scale_fill_manual(values = c('lightgrey', 'darkblue'), labels = c("No viruses known", "Viruses recorded")) -> g1
+
+## DB VERSION
 orderCounts %>%
   filter(order_ %in% top10orders) %>%
   mutate(order_ = factor(order_, levels = rev(top10orders))) %>%
@@ -38,13 +56,17 @@ orderCounts %>%
   mutate(anyViruses = factor(anyViruses, levels = c('0', '1'))) %>%
   ggplot(aes(fill=anyViruses, y = count, x = `order_`)) + 
   geom_bar(position="stack", stat="identity") +
-  coord_flip() + 
+  #coord_flip() + 
   xlab('Mammal orders (top 10 by descending species richness)') + 
   ylab('Number of species') + 
   theme_bw() + 
-  theme(legend.position = c(0.6, 0.1), 
-        legend.title = element_blank(),
-        legend.box.background = element_rect(colour = "black")) + 
+  theme(legend.position = "top",
+        legend.title=element_blank(),
+        axis.text.x = element_text(angle=45,hjust=1),
+        axis.title.x = element_blank())+
+  #theme(legend.position = c(0.6, 0.1), 
+  #      legend.title = element_blank(),
+  #      legend.box.background = element_rect(colour = "black")) + 
   scale_fill_manual(values = c('lightgrey', 'darkblue'), labels = c("No viruses known", "Viruses recorded")) -> g1
 
 ## Map
@@ -64,12 +86,23 @@ propno <- (noraster)/(noraster+yesraster)
 plot(propno)
 
 scaleddiffdf <- raster::as.data.frame(propno, xy = TRUE)
-scaleddiffdf %>% 
-  ggplot(aes(x = x, y = y, fill = layer)) + 
-  geom_raster() + coord_sf() + 
+# scaleddiffdf %>% 
+#   ggplot(aes(x = x, y = y, fill = layer)) + 
+#   geom_raster() + coord_sf() + 
+#   theme_void() +
+#   scale_fill_gradientn(colors = met.brewer("Morgenstern"), name = 'Proportion with \nno known viruses') -> g2
+
+## DB VERSION
+scaleddiffdf %>%
+  ggplot(aes(x = x, y = y, fill = layer)) +
+  geom_raster() + coord_sf() +
   theme_void() +
+  theme(legend.position = "top")+
   scale_fill_gradientn(colors = met.brewer("Morgenstern"), name = 'Proportion with \nno known viruses') -> g2
 
 ## Assembly
 
-g1 + g2 + plot_layout(widths = c(1, 3))
+# g1 + g2 + plot_layout(widths = c(1, 3))
+
+## DB VERSION, use width=4,height=4.5
+ggarrange(g1,g2,ncol=1,heights=c(1,1))
