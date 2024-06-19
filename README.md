@@ -1,4 +1,4 @@
-# Biodiversity & ID
+# Biodiversity & Infectious Disease
 
 This code is used to generate the figures for the review on biodiversity and infectious disease, citation to come. 
 
