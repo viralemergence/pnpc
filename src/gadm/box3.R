@@ -10,7 +10,8 @@ library(vroom)
 library(fasterize)
 library(patchwork)
 library(MetBrewer)
-library(ggpubr)
+
+source(here::here("./src/global-funs.R"))
 
 vir <- vroom::vroom(here::here("./data/virion/virion-zipped.csv.gz"))
 # need to make sure we're all using the same IUCN
@@ -31,7 +32,6 @@ tryCatch(
     }
   }
 )
-
 
 # IUCN data ====================================================================
 
@@ -84,12 +84,12 @@ orderCounts %>%
   # coord_flip() +
   xlab("Mammal orders (top 10 by descending species richness)") +
   ylab("Number of species") +
-  theme_bw() +
+  theme_base() +
   theme(
     legend.position = "top",
     legend.title = element_blank(),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    axis.title.x = element_blank()
+    axis.text.x = element_text(angle = 45, hjust = 1, face = "italic"),
+    axis.title.x = element_blank(),
   ) +
   # theme(legend.position = c(0.6, 0.1),
   #      legend.title = element_blank(),
