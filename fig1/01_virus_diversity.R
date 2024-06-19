@@ -40,7 +40,15 @@ if (outdated) {
     )
 }
 # read in
-vir <- vroom::vroom(here::here("./data/virion/Virion.csv"))
+vir <- vroom::vroom(here::here("./data/virion/virion-zipped.csv.gz"))
+
+# do a quick check that the zipped version works
+# library(arsenal)
+# vir <- vroom::vroom(here::here("./data/virion/Virion.csv"))
+# vroom::vroom_write(vir, here::here("./data/virion/virion-zipped.csv.gz"))
+# vir2 <- vroom::vroom(here::here("./data/virion/virion-zipped.csv.gz"))
+# summary(arsenal::comparedf(vir, vir2)) # perfect
+
 edges <- vroom::vroom(here::here("./data/virion/Edgelist.csv"))
 iucn_shp <- sf::st_read(here::here("./data/IUCN/"))
 host_taxonomy <- vroom::vroom(here::here("./data/virion/TaxonomyHost.csv"))
