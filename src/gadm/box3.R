@@ -90,6 +90,8 @@ orderCounts %>%
     legend.title = element_blank(),
     axis.text.x = element_text(angle = 45, hjust = 1, face = "italic"),
     axis.title.x = element_blank(),
+    legend.margin = margin(0, 0, 0, 0),
+    legend.box.margin = margin(2, 2, 2, 2)
   ) +
   # theme(legend.position = c(0.6, 0.1),
   #      legend.title = element_blank(),
@@ -131,7 +133,7 @@ scaleddiffdf %>%
   theme(legend.position = "top") +
   scale_fill_gradientn(
     colors = met.brewer("Morgenstern"),
-    name = "Proportion with \nno known viruses"
+    name = "Proportion with\nno known viruses"
   ) -> g2
 
 g22 <- ggplot() +
@@ -139,12 +141,21 @@ g22 <- ggplot() +
   theme_base() +
   theme(
     legend.position = "top",
-    # legend.margin = margin(0, 0, 0, 0),
-    # legend.box.margin = margin(5, 5, 5, 5)
+    legend.key.size = unit(2, "cm"), # change legend key size
+    legend.key.height = unit(1, "cm"), # change legend key height
+    legend.key.width = unit(1, "cm"), # change legend key width
+    legend.title = element_text(size = 14), # change legend title font size
+    legend.text = element_text(size = 10), # change legend text font size
+    legend.margin = margin(0, 0, 0, 0),
+    legend.box.margin = margin(5, 5, 5, 5),
+    legend.title.align = 1
   ) +
   scale_fill_gradientn(
     colors = met.brewer("Morgenstern"),
-    name = "Proportion with \nno known viruses"
+    name = "Proportion with  \nno known viruses  ",
+    breaks = c(0, 0.25, 0.50, 0.75, 1),
+    labels = c("0.0", "0.25", "0.50", "0.75", "1.00"),
+    limits = c(0, 1)
   )
 ggplot2::ggsave(here::here("./src/gadm/figs/just-map.png"), g22)
 ## Assembly
@@ -156,4 +167,6 @@ ggplot2::ggsave(here::here("./src/gadm/figs/just-map.png"), g22)
 
 # cole version
 p <- g1 + g22 + plot_layout(widths = c(-1, 2))
-ggplot2::ggsave(here::here("./figs/box-3/side-by-side.png"), p)
+ggplot2::ggsave(here::here("./figs/box-3/side-by-side.png"), p,
+  width = 12, height = 10
+)
