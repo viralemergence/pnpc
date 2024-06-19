@@ -3,6 +3,7 @@
 
 # the big IUCN data 
 /data/IUCN/
+/data/IUCN.zip
 /data/virion/Virion.csv
 
 # History files

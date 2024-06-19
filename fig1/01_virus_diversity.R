@@ -51,6 +51,7 @@ vir <- vroom::vroom(here::here("./data/virion/virion-zipped.csv.gz"))
 
 edges <- vroom::vroom(here::here("./data/virion/Edgelist.csv"))
 iucn_shp <- sf::st_read(here::here("./data/IUCN/"))
+qs::qsave(iucn_shp, here::here("./data/test-iucn.qs"))
 host_taxonomy <- vroom::vroom(here::here("./data/virion/TaxonomyHost.csv"))
 
 #' NOTES
