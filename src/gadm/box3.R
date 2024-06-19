@@ -94,7 +94,10 @@ orderCounts %>%
   # theme(legend.position = c(0.6, 0.1),
   #      legend.title = element_blank(),
   #      legend.box.background = element_rect(colour = "black")) +
-  scale_fill_manual(values = c("lightgrey", "darkblue"), labels = c("No viruses known", "Viruses recorded")) -> g1
+  scale_fill_manual(
+    values = c("lightgrey", "darkblue"),
+    labels = c("No viruses known", "Viruses recorded")
+  ) -> g1
 
 ## Map
 
@@ -126,11 +129,31 @@ scaleddiffdf %>%
   coord_sf() +
   theme_void() +
   theme(legend.position = "top") +
-  scale_fill_gradientn(colors = met.brewer("Morgenstern"), name = "Proportion with \nno known viruses") -> g2
+  scale_fill_gradientn(
+    colors = met.brewer("Morgenstern"),
+    name = "Proportion with \nno known viruses"
+  ) -> g2
 
+g22 <- ggplot() +
+  tidyterra::stat_spatraster(data = terra::rast(propno)) +
+  theme_void() +
+  theme(
+    legend.position = "top",
+    # legend.margin = margin(0, 0, 0, 0),
+    # legend.box.margin = margin(5, 5, 5, 5)
+  ) +
+  scale_fill_gradientn(
+    colors = met.brewer("Morgenstern"),
+    name = "Proportion with \nno known viruses"
+  )
+ggplot2::ggsave(here::here("./src/gadm/figs/just-map.png"), g22)
 ## Assembly
 
 # g1 + g2 + plot_layout(widths = c(1, 3))
 
 ## DB VERSION, use width=4,height=4.5
-ggarrange(g1, g2, ncol = 1, heights = c(1, 1))
+# ggarrange(g1, g2, ncol = 2, heights = c(1, 1))
+
+# cole version
+p <- g1 + g22 + plot_layout(widths = c(-1, 2))
+ggplot2::ggsave(here::here("./src/gadm/figs/side-by-side.png"), p)
