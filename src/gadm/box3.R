@@ -95,7 +95,7 @@ orderCounts %>%
   #      legend.title = element_blank(),
   #      legend.box.background = element_rect(colour = "black")) +
   scale_fill_manual(
-    values = c("lightgrey", "darkblue"),
+    values = c("#d3d3d3b4", "#a65dd3"),
     labels = c("No viruses known", "Viruses recorded")
   ) -> g1
 
@@ -127,7 +127,7 @@ scaleddiffdf %>%
   ggplot(aes(x = x, y = y, fill = layer)) +
   geom_raster() +
   coord_sf() +
-  theme_void() +
+  theme_base() +
   theme(legend.position = "top") +
   scale_fill_gradientn(
     colors = met.brewer("Morgenstern"),
@@ -136,7 +136,7 @@ scaleddiffdf %>%
 
 g22 <- ggplot() +
   tidyterra::stat_spatraster(data = terra::rast(propno)) +
-  theme_void() +
+  theme_base() +
   theme(
     legend.position = "top",
     # legend.margin = margin(0, 0, 0, 0),
