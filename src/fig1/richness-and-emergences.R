@@ -7,22 +7,28 @@
 library(readr)
 library(here)
 library(dplyr)
+library(magrittr)
+
+library(dplyr)
 library(sf)
 library(raster)
 library(fasterize)
 library(ggnewscale)
 
-# raster
 
-clo1 <- read_csv("~/Documents/Github/clover/clover/clover_1.0_allpathogens/CLOVER_1.0_Bacteria_AssociationsFlatFile.csv")
-clo2 <- read_csv("~/Documents/Github/clover/clover/clover_1.0_allpathogens/CLOVER_1.0_HelminthProtozoaFungi_AssociationsFlatFile.csv")
-clo3 <- read_csv("~/Documents/Github/clover/clover/clover_1.0_allpathogens/CLOVER_1.0_Viruses_AssociationsFlatFile.csv")
-clo <- bind_rows(clo1, clo2, clo3)
+clo_bac <- readr::read_csv(here::here("./data/clover/clover-1.0-bacteria.csv"))
+clo_vir <- readr::read_csv(here::here("./data/clover/clover-1.0-viruses.csv"))
+clo_other <- readr::read_csv(
+  here::here("./data/clover/clover-1.0-hel-proto-fungi.csv")
+)
 
-clo %>%
-  filter(Host == "homo sapiens") %>%
-  pull(Pathogen) %>%
-  unique() -> zoonoses
+# single object to work on
+clo <- dplyr::bind_rows(clo_bac, clo_vir, clo_other)
+
+zoonoses <- clo %>%
+  dplyr::filter(Host == "homo sapiens") %>%
+  dplyr::pull(Pathogen) %>%
+  unique()
 clo %>%
   filter(HostClass == "mammalia") %>%
   filter(!(Host == "homo sapiens")) %>%

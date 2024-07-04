@@ -14,7 +14,7 @@ if (file.exists(here::here("./data/clover/"))) {
     library(here)
     download.file(
         url = paste0(
-            "https://github.com/viralemergence/clover/blob/main/clover/",
+            "https://github.com/viralemergence/clover/raw/main/clover/",
             "clover_1.0_allpathogens/",
             "CLOVER_1.0_Bacteria_AssociationsFlatFile.csv"
         ),
@@ -22,7 +22,7 @@ if (file.exists(here::here("./data/clover/"))) {
     )
     download.file(
         url = paste0(
-            "https://github.com/viralemergence/clover/blob/main/clover/",
+            "https://github.com/viralemergence/clover/raw/main/clover/",
             "clover_1.0_allpathogens/",
             "CLOVER_1.0_HelminthProtozoaFungi_AssociationsFlatFile.csv"
         ),
@@ -30,7 +30,7 @@ if (file.exists(here::here("./data/clover/"))) {
     )
     download.file(
         url = paste0(
-            "https://github.com/viralemergence/clover/blob/main/clover/",
+            "https://github.com/viralemergence/clover/raw/main/clover/",
             "clover_1.0_allpathogens/",
             "CLOVER_1.0_Viruses_AssociationsFlatFile.csv"
         ),
