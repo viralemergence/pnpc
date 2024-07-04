@@ -1,6 +1,6 @@
-# Biodiversity & Infectious Disease
+# Pathogens & Planetary Change
 
-This code is used to generate the figures for the review on biodiversity and infectious disease, citation to come. 
+This code is used to generate the figures for the review on biodiversity, climate & planetary change, and infectious disease, citation to come. 
 
 ## For Users
 
