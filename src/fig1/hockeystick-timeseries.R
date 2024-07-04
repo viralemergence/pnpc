@@ -48,27 +48,81 @@ temperature <- readr::read_delim(
         hi_ci_31 = `31-year filtered full ensemble 97.5th percentile`
     ) %>%
     # dplyr::select(year, median, lo_ci, hi_ci) %>%
-    dplyr::filter(year > 1750)
-#' we're re-baselining these data to 1800-1830, so the values will all be
+    dplyr::filter(year > 1600)
+#' we're re-baselining these data to 1600-1699, so the values will all be
 #' subtracted from the mean of the median, upper and lower CI's respecitvely
 #' and then given as values relative to that time
 mean_baseline <- temperature %>%
-    dplyr::filter(year %in% c(1750:1800)) %>%
+    dplyr::filter(year %in% c(1600:1699)) %>%
     dplyr::summarize(
-        mean = median(median),
-        hi = median(hi_ci),
-        lo = median(lo_ci)
+        mean = mean(median),
+        hi = mean(hi_ci),
+        lo = mean(lo_ci)
     )
 re_baselined_temp <- temperature %>%
     dplyr::rowwise() %>%
     dplyr::mutate(
         median = median - mean_baseline$mean,
-        lo_ci = lo_ci - mean_baseline$lo,
-        hi_ci = hi_ci - mean_baseline$hi
+        lo_ci = lo_ci - mean_baseline$mean,
+        hi_ci = hi_ci - mean_baseline$mean,
+        instrument = instrument - mean_baseline$mean
     )
 spillover <- readr::read_csv(
     here::here("./data/recreation/data-from-meadows-etal-2023.csv")
 )
+
+# temperature plot =============================================================
+temperature_plot <- ggplot() +
+    geom_hline(
+        aes(yintercept = 0.0),
+        colour = "black", linetype = "dashed", alpha = 0.4
+    ) +
+    geom_ribbon(
+        data = re_baselined_temp,
+        aes(
+            x = year, ymin = lo_ci, ymax = hi_ci
+        ), alpha = 0.2
+    ) +
+    geom_line(
+        data = re_baselined_temp, aes(
+            x = year, y = median, colour = median
+        ), size = 1
+    ) +
+    # scale_colour_gradient(
+    #     "Median Anomaly °C",
+    #     low = "#d5a8f1", high = "#3b0b59",
+    #     limits = c(-0.5, 1.2)
+    # ) +
+    geom_colorpath(
+        data = re_baselined_temp[which(re_baselined_temp$year > 2000), ],
+        aes(
+            x = year, y = instrument
+        ),
+        cols = c("#3b0b59", "white")
+    ) +
+    theme_base() +
+    labs(
+        x = "Year", y = "Temperature anomaly °C from 1600-1699 baseline",
+    ) +
+    theme(
+        legend.position = "inside",
+        legend.position.inside = c(0.2, 0.8)
+    ) +
+    scale_x_continuous(
+        breaks = seq(from = 1600, to = 2020, by = 50)
+    )
+ggsave(
+    here::here("./figs/fig-1/temperature.png"),
+    temperature_plot,
+    height = 7, width = 7
+)
+
+## examples
+dat <- data.frame(x = seq(2, 10, 2), y = seq(4, 20, 4))
+
+ggplot() +
+    geom_colorpath(data = dat, aes(x = x, y = y), cols = c("red", "black")) +
+    ggtitle("Default colors")
 
 # plot extinction ==============================================================
 extinctions_plot <- ggplot() +
@@ -113,39 +167,6 @@ extinctions_plot <- ggplot() +
 ggsave(
     here::here("./figs/fig-1/extinctions.png"),
     extinctions_plot,
-    height = 7, width = 7
-)
-
-# temperature plot =============================================================
-temperature_plot <- ggplot() +
-    geom_ribbon(
-        data = re_baselined_temp,
-        aes(
-            x = year, ymin = lo_ci, ymax = hi_ci
-        ),
-        alpha = 0.2
-    ) +
-    geom_line(
-        data = re_baselined_temp,
-        aes(
-            x = year, y = median, colour = median
-        ),
-        size = 1
-    ) +
-    theme_base() +
-    scale_colour_gradient(
-        "Median Anomaly °C",
-        low = "#d5a8f1", high = "#3b0b59",
-        limits = c(-1, 1)
-    ) +
-    labs(x = "Year", y = "Temperature Anomaly °C") +
-    theme(
-        legend.position = "inside",
-        legend.position.inside = c(0.2, 0.8)
-    )
-ggsave(
-    here::here("./figs/fig-1/temperature.png"),
-    temperature_plot,
     height = 7, width = 7
 )
 

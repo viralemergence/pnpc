@@ -84,3 +84,56 @@ theme_base <- function(base_size = 16, base_family = "") {
         )
     # TODO: get margins right
 }
+
+#' geom_colorpath
+#' @description lines with alternating color "just for the effect".
+#' @name colorpath
+#' @author tjebo (on StackOverflow):
+#' https://stackoverflow.com/a/70756000/10475274
+#' @examples
+#' @export
+StatColorPath <- ggproto("StatColorPath", Stat,
+    compute_group = function(data, scales, params,
+                             n_seg = 20, n = 100,
+                             cols = c("black", "white")) {
+        # interpolate
+        d <- approx(data$x, data$y, n = n)
+        # create start and end points for segments
+        d2 <- data.frame(
+            x = head(d$x, -1), xend = d$x[-1],
+            y = head(d$y, -1), yend = d$y[-1]
+        )
+        # create vector of segment colors
+        d2$color <- rep(cols,
+            each = ceiling((n - 1) / n_seg),
+            length.out = n - 1
+        )
+        d2
+    },
+    required_aes = c("x", "y")
+)
+
+#' @rdname colorpath
+#' @import ggplot2
+#' @inheritParams ggplot2::layer
+#' @inheritParams ggplot2::geom_segment
+#' @author tjebo (on StackOverflow):
+#' https://stackoverflow.com/a/70756000/10475274
+#' @param n_seg number of segments along line, according to taste
+#' @param n number of points at which interpolation takes place
+#'   increase if line takes sharp turns
+#' @param cols vector of alternating colors
+#' @export
+geom_colorpath <- function(mapping = NULL, data = NULL, geom = "segment",
+                           position = "identity", na.rm = FALSE,
+                           show.legend = NA, inherit.aes = TRUE,
+                           cols = c("black", "white"),
+                           n_seg = 20, n = 100, ...) {
+    layer(
+        stat = StatColorPath, data = data, mapping = mapping, geom = geom,
+        position = position, show.legend = show.legend,
+        inherit.aes = inherit.aes, params = list(
+            na.rm = na.rm, cols = cols, n = n, n_seg = n_seg, ...
+        )
+    )
+}
