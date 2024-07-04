@@ -7,6 +7,7 @@ library(here)
 library(readr)
 library(ggplot2)
 library(magrittr)
+library(rstanram)
 
 extinction <- readr::read_csv(
     here::here("./data/recreation/data-from-ceballos-etal-2015.csv")
@@ -104,15 +105,84 @@ temperature_plot <- ggplot() +
     ) +
     theme_base() +
     scale_colour_gradient(
+        "Median Anomoly °C",
         low = "blue", high = "red",
         limits = c(-1, 1)
     ) +
-    guides(
-        colour = "none"
-    ) +
-    labs(x = "Year", y = "Temperature Anomoly °C")
+    labs(x = "Year", y = "Temperature Anomoly °C") +
+    theme(
+        legend.position.inside = c(0.3, 0.8)
+    )
 ggsave(
     here::here("./figs/fig-1/temperature.png"),
     temperature_plot,
     height = 7, width = 7
 )
+
+# outbreaks plot ===============================================================
+
+by_year_df <- spillover %>%
+    dplyr::group_by(Event_start_year) %>%
+    dplyr::reframe(
+        reported_cases = sum(reported_cases),
+        reported_events = unique(Event_name)
+    ) %>%
+    dplyr::group_by(Event_start_year) %>%
+    dplyr::summarize(
+        event_num = dplyr::n_distinct(reported_events)
+    ) %>%
+    tidyr::complete(
+        Event_start_year = 1963:2019, fill = list(event_num = 0)
+    ) %>%
+    dplyr::rename(year = Event_start_year)
+
+# fit simple model to show the prediction
+mod <- rstanarm::stan_glm(
+    event_num ~ year,
+    data = by_year_df,
+    family = rstanarm::neg_binomial_2(),
+    iter = 10000,
+    warmup = 3000,
+    chains = 4,
+    cores = 4
+)
+# draw some predicted values
+mod_pred <- tidybayes::add_epred_draws(
+    newdata = modelr::data_grid(
+        data = by_year_df,
+        year = modelr::seq_range(year, n = 101)
+    ),
+    object = mod
+)
+
+spillover_plot <- ggplot() +
+    ggdist::stat_lineribbon(
+        data = mod_pred,
+        aes(y = .epred, x = year), .width = c(.99, .95, .8, .5),
+        color = MoMAColors::moma.colors("Flash")[8],
+        alpha = 0.4
+    ) +
+    geom_point(
+        data = by_year_df,
+        aes(x = year, y = event_num),
+        shape = 21, colour = "black", fill = "#74478f", alpha = 0.7
+    ) +
+    theme_base() +
+    labs(x = "Year", y = "Reported Spillover Events") +
+    scale_fill_manual(
+        name = "Credible Interval",
+        values = c(MoMAColors::moma.colors("Flash")[c(1, 3, 5, 7)])
+    ) +
+    scale_x_continuous(
+        breaks = c(
+            1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010,
+            2015, 2020
+        )
+    )
+ggsave(
+    here::here("./figs/fig-1/spillover.png"),
+    spillover_plot,
+    height = 7, width = 7
+)
+
+# put all the plots together ===================================================
