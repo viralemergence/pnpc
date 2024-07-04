@@ -41,10 +41,31 @@ temperature <- readr::read_delim(
         year = Year,
         median = `Full ensemble median`,
         lo_ci = `Full ensemble 2.5th percentile`,
-        hi_ci = `Full ensemble 97.5th percentile`
+        hi_ci = `Full ensemble 97.5th percentile`,
+        instrument = `Cowtan & Way instrumental target`,
+        median_31 = `31-year filtered full ensemble median`,
+        lo_ci_31 = `31-year filtered full ensemble 2.5th percentile`,
+        hi_ci_31 = `31-year filtered full ensemble 97.5th percentile`
     ) %>%
-    dplyr::select(year, median, lo_ci, hi_ci) %>%
-    dplyr::filter(year > 1600)
+    # dplyr::select(year, median, lo_ci, hi_ci) %>%
+    dplyr::filter(year > 1750)
+#' we're re-baselining these data to 1800-1830, so the values will all be
+#' subtracted from the mean of the median, upper and lower CI's respecitvely
+#' and then given as values relative to that time
+mean_baseline <- temperature %>%
+    dplyr::filter(year %in% c(1750:1800)) %>%
+    dplyr::summarize(
+        mean = median(median),
+        hi = median(hi_ci),
+        lo = median(lo_ci)
+    )
+re_baselined_temp <- temperature %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+        median = median - mean_baseline$mean,
+        lo_ci = lo_ci - mean_baseline$lo,
+        hi_ci = hi_ci - mean_baseline$hi
+    )
 spillover <- readr::read_csv(
     here::here("./data/recreation/data-from-meadows-etal-2023.csv")
 )
@@ -83,7 +104,7 @@ extinctions_plot <- ggplot() +
     ) +
     labs(
         x = "Date Range",
-        y = "Cumulative Extinctions as % of IUCN-evaluated Spp"
+        y = "Cumulative Extinctions as % of IUCN-evaluated Species"
     ) +
     theme(
         legend.position = "inside",
@@ -98,14 +119,14 @@ ggsave(
 # temperature plot =============================================================
 temperature_plot <- ggplot() +
     geom_ribbon(
-        data = temperature,
+        data = re_baselined_temp,
         aes(
             x = year, ymin = lo_ci, ymax = hi_ci
         ),
         alpha = 0.2
     ) +
     geom_line(
-        data = temperature,
+        data = re_baselined_temp,
         aes(
             x = year, y = median, colour = median
         ),
@@ -113,11 +134,11 @@ temperature_plot <- ggplot() +
     ) +
     theme_base() +
     scale_colour_gradient(
-        "Median Anomoly °C",
-        low = "blue", high = "red",
+        "Median Anomaly °C",
+        low = "#d5a8f1", high = "#3b0b59",
         limits = c(-1, 1)
     ) +
-    labs(x = "Year", y = "Temperature Anomoly °C") +
+    labs(x = "Year", y = "Temperature Anomaly °C") +
     theme(
         legend.position = "inside",
         legend.position.inside = c(0.2, 0.8)
@@ -204,5 +225,6 @@ ggsave(
 all_panels <- spillover_plot + extinctions_plot + temperature_plot
 ggsave(
     here::here("./figs/fig-1/all-panels.png"),
-    height = 7, width = 21
+    height = 7, width = 21,
+    dpi = 300
 )
