@@ -88,30 +88,24 @@ temperature_plot <- ggplot() +
         data = re_baselined_temp[which(re_baselined_temp$year < 1850), ],
         aes(
             x = year, ymin = lo_ci, ymax = hi_ci
-        ), fill = "#ebd9f4", alpha = 0.3
-    ) +
-    geom_line(
-        data = re_baselined_temp[which(re_baselined_temp$year < 1850), ],
-        aes(
-            x = year, y = single_val, colour = single_val
-        ), size = 1
+        ), fill = "#eeddf7", alpha = 0.6
     ) +
     geom_line(
         data = re_baselined_temp[which(re_baselined_temp$year < 1850), ],
         aes(
             x = year, y = single_val
-        ), size = 1, , colour = "white", linetype = "8f"
+        ), size = 0.7, colour = "grey60", linetype = "11", alpha = 0.6
     ) +
     geom_line(
         data = re_baselined_temp[which(re_baselined_temp$year >= 1850), ],
         aes(
             x = year, y = single_val, colour = single_val
-        ), size = 1
+        ), size = 0.8
     ) +
     scale_colour_gradient(
         "Median Anomaly °C",
         low = "#e4d1f0", high = "#3b0b59",
-        limits = c(-0.5, 1.5)
+        limits = c(-0.1, 1.32)
     ) +
     theme_base() +
     labs(
