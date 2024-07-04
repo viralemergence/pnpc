@@ -78,27 +78,27 @@ temperature_plot <- ggplot() +
         colour = "black", linetype = "dashed", alpha = 0.4
     ) +
     geom_ribbon(
-        data = re_baselined_temp,
+        data = re_baselined_temp[which(re_baselined_temp$year < 1850), ],
         aes(
             x = year, ymin = lo_ci, ymax = hi_ci
         ), alpha = 0.2
     ) +
     geom_line(
-        data = re_baselined_temp, aes(
+        data = re_baselined_temp[which(re_baselined_temp$year < 1850), ],
+        aes(
             x = year, y = median, colour = median
         ), size = 1
     ) +
-    # scale_colour_gradient(
-    #     "Median Anomaly °C",
-    #     low = "#d5a8f1", high = "#3b0b59",
-    #     limits = c(-0.5, 1.2)
-    # ) +
-    geom_colorpath(
+    scale_colour_gradient(
+        "Median Anomaly °C",
+        low = "#d5a8f1", high = "#3b0b59",
+        limits = c(-0.5, 1.2)
+    ) +
+    geom_line(
         data = re_baselined_temp[which(re_baselined_temp$year > 2000), ],
         aes(
             x = year, y = instrument
-        ),
-        cols = c("#3b0b59", "white")
+        ), size = 0.5, colour = "#3b0b59"
     ) +
     theme_base() +
     labs(
