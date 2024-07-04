@@ -66,6 +66,13 @@ re_baselined_temp <- temperature %>%
         lo_ci = lo_ci - mean_baseline$mean,
         hi_ci = hi_ci - mean_baseline$mean,
         instrument = instrument - mean_baseline$mean
+    ) %>%
+    #' I want just ONE variable to use as a colour scale variable so I don't
+    #' really care if it's EXACTLY accurate, but I'm making one out of the
+    #' median pre-1850 and the instrument after 1850 so I can use that single
+    #' value
+    dplyr::mutate(
+        single_val = ifelse(year < 1850, median, instrument)
     )
 spillover <- readr::read_csv(
     here::here("./data/recreation/data-from-meadows-etal-2023.csv")
@@ -81,24 +88,30 @@ temperature_plot <- ggplot() +
         data = re_baselined_temp[which(re_baselined_temp$year < 1850), ],
         aes(
             x = year, ymin = lo_ci, ymax = hi_ci
-        ), alpha = 0.2
+        ), fill = "#ebd9f4", alpha = 0.3
     ) +
     geom_line(
         data = re_baselined_temp[which(re_baselined_temp$year < 1850), ],
         aes(
-            x = year, y = median, colour = median
+            x = year, y = single_val, colour = single_val
+        ), size = 1
+    ) +
+    geom_line(
+        data = re_baselined_temp[which(re_baselined_temp$year < 1850), ],
+        aes(
+            x = year, y = single_val
+        ), size = 1, , colour = "white", linetype = "8f"
+    ) +
+    geom_line(
+        data = re_baselined_temp[which(re_baselined_temp$year >= 1850), ],
+        aes(
+            x = year, y = single_val, colour = single_val
         ), size = 1
     ) +
     scale_colour_gradient(
         "Median Anomaly °C",
-        low = "#d5a8f1", high = "#3b0b59",
-        limits = c(-0.5, 1.2)
-    ) +
-    geom_line(
-        data = re_baselined_temp[which(re_baselined_temp$year > 2000), ],
-        aes(
-            x = year, y = instrument
-        ), size = 0.5, colour = "#3b0b59"
+        low = "#e4d1f0", high = "#3b0b59",
+        limits = c(-0.5, 1.5)
     ) +
     theme_base() +
     labs(
@@ -110,6 +123,10 @@ temperature_plot <- ggplot() +
     ) +
     scale_x_continuous(
         breaks = seq(from = 1600, to = 2020, by = 50)
+    ) +
+    scale_y_continuous(
+        breaks = seq(from = -0.5, to = 1.5, by = 0.5),
+        limits = c(-0.7, 1.6)
     )
 ggsave(
     here::here("./figs/fig-1/temperature.png"),
