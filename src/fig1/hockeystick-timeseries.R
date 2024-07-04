@@ -128,13 +128,6 @@ ggsave(
     height = 7, width = 7
 )
 
-## examples
-dat <- data.frame(x = seq(2, 10, 2), y = seq(4, 20, 4))
-
-ggplot() +
-    geom_colorpath(data = dat, aes(x = x, y = y), cols = c("red", "black")) +
-    ggtitle("Default colors")
-
 # plot extinction ==============================================================
 extinctions_plot <- ggplot() +
     geom_line(
