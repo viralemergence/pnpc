@@ -2,7 +2,7 @@
 #' AUTHOR: Cole Brookson
 #' DATE: 19 June 2024
 
-# set up =======================================================================
+# download =====================================================================
 
 #' IUCN data are too big to be tracked by github. In lieu of doing something
 #' actually good and correct, they now live on my (Cole's) personal google drive
