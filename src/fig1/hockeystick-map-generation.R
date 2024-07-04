@@ -19,6 +19,8 @@ library(raster)
 library(fasterize)
 library(ggnewscale)
 
+source(here::here("./src/global-funs.R"))
+
 # data for the map portion
 clo_bac <- readr::read_csv(here::here("./data/clover/clover-1.0-bacteria.csv"))
 clo_vir <- readr::read_csv(here::here("./data/clover/clover-1.0-viruses.csv"))
@@ -99,7 +101,7 @@ richness_eidr_map <- ggplot() +
             x = Longitude, y = Latitude, shape = `Pathogen Type`,
             fill = `Pathogen Type`
         ),
-        color = "black", stroke = 0.6
+        color = "black", stroke = 0.6, size = 2
     ) +
     scale_shape_manual(values = c(21, 22, 23)) +
     scale_fill_manual(values = c(
@@ -115,10 +117,15 @@ richness_eidr_map <- ggplot() +
                 size = 4
             )
         )
+    ) +
+    theme(
+        legend.location = "inside",
+        legend.position.inside = c(0.1, 0.3)
     )
 ggsave(
     here::here("./figs/fig-1/map.png"),
-    richness_eidr_map
+    richness_eidr_map,
+    width = 8, height = 5
 )
 
 # hockey stick timeseries ======================================================
@@ -151,7 +158,7 @@ extinctions_plot <- ggplot() +
         aes(
             x = date_range, y = cumulative_ext_rate,
             colour = taxa, group = taxa, linetype = helper
-        ), size = 2
+        ), linewidth = 2
     ) +
     theme_base() +
     scale_color_manual(
@@ -182,7 +189,7 @@ extinctions_plot <- ggplot() +
     ) +
     theme(
         legend.position = "inside",
-        legend.position.inside = c(0.2, 0.8)
+        legend.position.inside = c(0.3, 0.8)
     )
 ggsave(
     here::here("./figs/fig-1/extinctions.png"),
@@ -256,7 +263,7 @@ spillover_plot <- ggplot() +
     ) +
     theme(
         legend.position = "inside",
-        legend.position.inside = c(0.2, 0.8),
+        legend.position.inside = c(0.3, 0.8),
         # legend.title = element_text(hjust = 0.5)
     )
 ggsave(
@@ -323,13 +330,13 @@ temperature_plot <- ggplot() +
         data = re_baselined_temp[which(re_baselined_temp$year < 1850), ],
         aes(
             x = year, y = single_val
-        ), size = 0.7, colour = "grey60", linetype = "11", alpha = 0.6
+        ), linewidth = 0.7, colour = "grey60", linetype = "11", alpha = 0.6
     ) +
     geom_line(
         data = re_baselined_temp[which(re_baselined_temp$year >= 1850), ],
         aes(
             x = year, y = single_val, colour = single_val
-        ), size = 0.8
+        ), linewidth = 0.8
     ) +
     scale_colour_gradient(
         "Median Anomaly °C",
@@ -342,7 +349,7 @@ temperature_plot <- ggplot() +
     ) +
     theme(
         legend.position = "inside",
-        legend.position.inside = c(0.2, 0.8)
+        legend.position.inside = c(0.3, 0.8)
     ) +
     scale_x_continuous(
         breaks = seq(from = 1600, to = 2020, by = 50)
@@ -365,4 +372,21 @@ ggsave(
     top_panels,
     height = 7, width = 21,
     dpi = 300
+)
+
+all_panels <-
+    (spillover_plot + extinctions_plot + temperature_plot) / richness_eidr_map +
+    patchwork::plot_layout(
+        heights = c(0.8, -1),
+        widths = c(0.33, 0.33, 0.33, 1)
+    ) +
+    patchwork::plot_annotation(
+        tag_levels = "A"
+    )
+
+ggsave(
+    here::here("./figs/fig-1/figure-1.png"),
+    all_panels,
+    dpi = 300,
+    height = 16, width = 18
 )
