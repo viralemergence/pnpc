@@ -32,7 +32,9 @@ zraster <- fasterize(ranges, mraster, fun = "sum")
 # points
 
 eidr <- read_csv("./Data/recreation/eidr.csv")
-eidr %>%
+
+eidr %>% 
+  filter(!(`Drug Resistance`=="Yes")) %>%
   dplyr::select(Longitude, Latitude, `Pathogen Type`) %>%
   separate_rows(everything(), sep = ",") %>%
   filter(!Latitude == "Not Found") %>%
@@ -41,6 +43,7 @@ eidr %>%
          Longitude = as.numeric(Longitude)) -> eidr
 
 eidr$`Pathogen Type`[!(eidr$`Pathogen Type` %in% c('Bacteria', 'Virus'))] <- "Other"
+
 
 # plot
 
