@@ -38,7 +38,8 @@ temperature <- readr::read_delim(
         lo_ci = `Full ensemble 2.5th percentile`,
         hi_ci = `Full ensemble 97.5th percentile`
     ) %>%
-    dplyr::select(year, median, lo_ci, hi_ci)
+    dplyr::select(year, median, lo_ci, hi_ci) %>%
+    dplyr::filter(year > 1600)
 spillover <- readr::read_csv(
     here::here("./data/recreation/data-from-meadows-etal-2023.csv")
 )
@@ -83,4 +84,35 @@ ggsave(
     here::here("./figs/fig-1/extinctions.png"),
     extinctions_plot,
     height = 8, width = 8
+)
+
+# temperature plot =============================================================
+temperature_plot <- ggplot() +
+    geom_ribbon(
+        data = temperature,
+        aes(
+            x = year, ymin = lo_ci, ymax = hi_ci
+        ),
+        alpha = 0.2
+    ) +
+    geom_line(
+        data = temperature,
+        aes(
+            x = year, y = median, colour = median
+        ),
+        size = 1
+    ) +
+    theme_base() +
+    scale_colour_gradient(
+        low = "blue", high = "red",
+        limits = c(-1, 1)
+    ) +
+    guides(
+        colour = "none"
+    ) +
+    labs(x = "Year", y = "Temperature Anomoly °C")
+ggsave(
+    here::here("./figs/fig-1/temperature.png"),
+    temperature_plot,
+    height = 7, width = 7
 )
