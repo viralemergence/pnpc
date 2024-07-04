@@ -8,6 +8,10 @@ library(readr)
 library(ggplot2)
 library(magrittr)
 library(rstanram)
+library(bayesplot)
+library(modelr)
+library(ggdist)
+library(patchwork)
 
 extinction <- readr::read_csv(
     here::here("./data/recreation/data-from-ceballos-etal-2015.csv")
@@ -52,7 +56,7 @@ extinctions_plot <- ggplot() +
         aes(
             x = date_range, y = cumulative_ext_rate,
             colour = taxa, group = taxa, linetype = helper
-        ), size = 3
+        ), size = 2
     ) +
     theme_base() +
     scale_color_manual(
@@ -80,11 +84,15 @@ extinctions_plot <- ggplot() +
     labs(
         x = "Date Range",
         y = "Cumulative Extinctions as % of IUCN-evaluated Spp"
+    ) +
+    theme(
+        legend.position = "inside",
+        legend.position.inside = c(0.2, 0.8)
     )
 ggsave(
     here::here("./figs/fig-1/extinctions.png"),
     extinctions_plot,
-    height = 8, width = 8
+    height = 7, width = 7
 )
 
 # temperature plot =============================================================
@@ -111,7 +119,8 @@ temperature_plot <- ggplot() +
     ) +
     labs(x = "Year", y = "Temperature Anomoly °C") +
     theme(
-        legend.position.inside = c(0.3, 0.8)
+        legend.position = "inside",
+        legend.position.inside = c(0.2, 0.8)
     )
 ggsave(
     here::here("./figs/fig-1/temperature.png"),
@@ -155,6 +164,7 @@ mod_pred <- tidybayes::add_epred_draws(
     object = mod
 )
 
+# plot the results
 spillover_plot <- ggplot() +
     ggdist::stat_lineribbon(
         data = mod_pred,
@@ -178,6 +188,11 @@ spillover_plot <- ggplot() +
             1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010,
             2015, 2020
         )
+    ) +
+    theme(
+        legend.position = "inside",
+        legend.position.inside = c(0.2, 0.8),
+        # legend.title = element_text(hjust = 0.5)
     )
 ggsave(
     here::here("./figs/fig-1/spillover.png"),
@@ -186,3 +201,8 @@ ggsave(
 )
 
 # put all the plots together ===================================================
+all_panels <- spillover_plot + extinctions_plot + temperature_plot
+ggsave(
+    here::here("./figs/fig-1/all-panels.png"),
+    height = 7, width = 21
+)
