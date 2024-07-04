@@ -177,7 +177,7 @@ p_viral_rich <- ggplot() +
     scale_fill_viridis(name = "Viral Diversity", option = "C")
 # scale_fill_gradient(low = "white", high = "yellow")
 ggsave(
-    here::here("./fig1/figs/viral-richness.png"),
+    here::here("./figs/fig-1/dep/viral-richness.png"),
     p_viral_rich
 )
 
@@ -199,7 +199,7 @@ p_viral_ndvi <- ggplot() +
     theme_void() +
     scale_fill_gradient2("Viral NDVI", low = "#c10707", high = "#850bd1")
 ggsave(
-    here::here("./fig1/figs/viral-ndvi.png"),
+    here::here("./figs/fig-1/dep/viral-ndvi.png"),
     p_viral_ndvi
 )
 
