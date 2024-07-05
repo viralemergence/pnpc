@@ -12,7 +12,7 @@
 download.file(
     url = paste0(
         "https://www.ncei.noaa.gov/pub/data/paleo/contributions_by_author/",
-        "frank2010/ensembles-percentiles.txt"
+        "frank2010/smoothedco2.txt"
     ),
     destfile = here::here("./data/recreation/data-from-frank-etal-2010.txt")
 )

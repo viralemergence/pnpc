@@ -333,11 +333,20 @@ co2_observed <- co2_observed %>%
     dplyr::summarize(
         ppm_mean = mean(ppm),
         ppm_sterr = std_err(ppm)
+    ) %>%
+    dplyr::rowwise() %>%
+    dplyr::mutate(
+        up_ci = ppm_mean + (1.96 * ppm_sterr),
+        lo_ci = ppm_mean - (1.96 * ppm_sterr)
     )
 
 co2_reconstructed <- co2_reconstructed %>%
-    dplyr::rename(year = Year, median = `50%`, lo = `2.5%`, hi = `97.5%`) %>%
-    dplyr::filter(year > 1600)
+    dplyr::group_by(Year) %>%
+    dplyr::summarise(
+        mean = mean(dplyr::c_across(ALL_50_full:ALL_200), na.rm = TRUE)
+    )
+ggplot() +
+    geom_line(data = co2_reconstructed, aes(x = Year, y = mean))
 
 ### plotting ===================================================================
 temperature_plot <- ggplot() +
