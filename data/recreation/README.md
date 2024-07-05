@@ -12,4 +12,6 @@ Though not used in exactly the same way, the hotspots data from Allen et al. (20
 
 The data from the Emerging Infectious Disease Repository (EIDR) was pulled from [their dashboard](https://eidr.ecohealthalliance.org/event-map).
 
+We are not re-creating a specific plot with the $CO^2$ data, but we do use them in the figure. Those data belong to [Frank et al. (2010)](https://doi.org/10.25921/xq6s-hf81) but we accessed them from [this NOAA portal.](https://www.ncei.noaa.gov/access/metadata/landing-page/bin/iso?id=noaa-recon-10437). Additionally, the $CO^2$ data (observed, not reconstructed, `data-from-lan-etal-2024.txt`) are from NOAA data, downloaded from [their portal here](https://gml.noaa.gov/ccgg/trends/gl_data.html). We preferentially use the observed data instead of the reconstructed values when possible. For the daily data, we convert it in our code to yearly averages. 
+
 Any and all credit for these data should go directly to the authors, and the re-use of those data are governed by their respective copyrights. 

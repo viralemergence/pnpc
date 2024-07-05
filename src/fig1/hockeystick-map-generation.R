@@ -39,6 +39,15 @@ temperature <- readr::read_delim(
     delim = "\t",
     skip = 4
 )
+co2_reconstructed <- readr::read_delim(
+    here::here("./data/recreation/data-from-frank-etal-2010.txt"),
+    delim = "\t"
+)
+co2_observed <- readr::read_delim(
+    here::here("./data/recreation/data-from-lan-etal-2024.txt"),
+    delim = "\t",
+    skip = 38
+)
 spillover <- readr::read_csv(
     here::here("./data/recreation/data-from-meadows-etal-2023.csv")
 )
@@ -163,7 +172,11 @@ extinctions_plot <- ggplot() +
     theme_base() +
     scale_color_manual(
         name = "Taxa",
-        values = c(MoMAColors::moma.colors("Klein")[c(1, 2, 4, 7)], "grey80"),
+        values = c(
+            MoMAColors::moma.colors("Exter")[c(2, 5, 7, 9)],
+            # MoMAColors::moma.colors("Flash")[c(4, 6)],
+            "grey80"
+        ),
         labels = c(
             "All Verts", "Birds", "Mammals",
             "Other Vertebrates", "Background"
@@ -313,6 +326,11 @@ re_baselined_temp <- temperature %>%
     dplyr::mutate(
         single_val = ifelse(year < 1850, median, instrument)
     )
+
+# clean and summarize the CO2 data
+co2 <- co2 %>%
+    dplyr::rename(year = Year, median = `50%`, lo = `2.5%`, hi = `97.5%`) %>%
+    dplyr::filter(year > 1600)
 
 ### plotting ===================================================================
 temperature_plot <- ggplot() +
