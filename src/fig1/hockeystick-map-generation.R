@@ -174,11 +174,11 @@ extinctions_plot <- ggplot() +
         name = "Taxa",
         values = c(
             MoMAColors::moma.colors("OKeeffe")[c(1, 4)],
-            MoMAColors::moma.colors("Flash")[c(2, 4)],
+            MoMAColors::moma.colors("Ernst")[c(4, 7)],
             "grey80"
         ),
         labels = c(
-            "All Verts", "Birds", "Mammals",
+            "All Vertebrates", "Birds", "Mammals",
             "Other Vertebrates", "Background"
         )
     ) +
@@ -198,7 +198,7 @@ extinctions_plot <- ggplot() +
     ) +
     labs(
         x = "Date Range Midpoint",
-        y = "Cumulative Extinctions as % of IUCN-evaluated Species"
+        y = "Cumulative Extinctions as % \nof IUCN-evaluated Species"
     ) +
     theme(
         legend.position = "inside",
@@ -270,7 +270,7 @@ spillover_plot <- ggplot() +
     ) +
     scale_x_continuous(
         breaks = c(
-            1965, 1975, 1985, 1995, 2005, 2015, 2020
+            1965, 1975, 1985, 1995, 2005, 2015
         )
     ) +
     theme(
@@ -386,14 +386,14 @@ temperature_plot <- ggplot() +
         ), linewidth = 0.8
     ) +
     scale_colour_gradient(
-        bquote("Atmospheric" ~ CO[2] * " (ppm)"),
+        bquote("Atmospheric" ~ CO[2] * ""),
         # paste0("Atmospheric ", expression(paste(CO^2)), " (ppm)"),
         low = "#f3d567", high = "#b80422",
         limits = c(275, 407)
     ) +
     theme_base() +
     labs(
-        x = "Year", y = "Temperature anomaly °C from 1600-1699 baseline",
+        x = "Year", y = "Temperature anomaly °C from \n1600-1699 baseline",
     ) +
     theme(
         legend.position = "inside",
@@ -425,7 +425,7 @@ ggsave(
 all_panels <-
     (spillover_plot + extinctions_plot + temperature_plot) / richness_eidr_map +
     patchwork::plot_layout(
-        heights = c(0.8, -1),
+        heights = c(0.6, -1),
         widths = c(0.33, 0.33, 0.33, 1)
     ) +
     patchwork::plot_annotation(
@@ -433,8 +433,8 @@ all_panels <-
     )
 
 ggsave(
-    here::here("./figs/fig-1/figure-1-purple.png"),
+    here::here("./figs/fig-1/figure-1-blue.png"),
     all_panels,
     dpi = 300,
-    height = 16, width = 18
+    height = 14, width = 17
 )
