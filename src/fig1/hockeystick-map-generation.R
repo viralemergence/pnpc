@@ -98,10 +98,10 @@ eidr$`Pathogen Type`[!(eidr$`Pathogen Type`
 ## plot ========================================================================
 richness_eidr_map <- ggplot() +
     tidyterra::stat_spatraster(data = terra::rast(zraster), alpha = 0.7) +
-    labs(x = "x", y = "y") +
-    scale_x_continuous(expand = c(0, 0)) +
-    scale_y_continuous(expand = c(0, 0))
-theme_base() +
+    # these scale_continuous with the expands fill out the box better
+    scale_x_continuous(expand = c(0.02, 0.02)) +
+    scale_y_continuous(expand = c(0.03, 0.03)) +
+    theme_base() +
     scale_fill_gradientn(
         "Mammal Hosts",
         colors = rev(MoMAColors::moma.colors("OKeeffe"))
