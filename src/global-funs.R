@@ -33,7 +33,7 @@ std_err <- function(x) {
 #' @family themes
 #' @export
 #' @importFrom ggplot2 theme_grey
-theme_foundation <- function(base_size = 12, base_family = "") {
+theme_foundation <- function(base_size = 16, base_family = "") {
     thm <- theme_grey(base_size = base_size, base_family = base_family)
     for (i in names(thm)) {
         if ("colour" %in% names(thm[[i]])) {

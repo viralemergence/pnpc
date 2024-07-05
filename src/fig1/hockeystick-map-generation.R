@@ -129,17 +129,19 @@ richness_eidr_map <- ggplot() +
     ) +
     theme(
         legend.location = "inside",
-        legend.position.inside = c(0.1, 0.3)
+        legend.position.inside = c(0.1, 0.3),
+        legend.text = element_text(size = rel(1)),
+        legend.title = element_text(size = rel(1.2))
     )
 ggsave(
     here::here("./figs/fig-1/map.png"),
     richness_eidr_map,
-    width = 8, height = 5
+    width = 14, height = 7
 )
 ggsave(
     here::here("./figs/fig-1/map-hi-def.png"),
     richness_eidr_map,
-    width = 8, height = 5,
+    width = 14, height = 7,
     dpi = 600
 )
 
@@ -403,10 +405,10 @@ temperature_plot <- ggplot() +
     ) +
     theme(
         legend.position = "inside",
-        legend.position.inside = c(0.35, 0.8)
+        legend.position.inside = c(0.4, 0.8)
     ) +
     scale_x_continuous(
-        breaks = seq(from = 1600, to = 2020, by = 50)
+        breaks = seq(from = 1600, to = 2020, by = 100)
     ) +
     scale_y_continuous(
         breaks = seq(from = -0.5, to = 1.5, by = 0.5),
@@ -439,7 +441,7 @@ all_panels <-
     )
 
 ggsave(
-    here::here("./figs/fig-1/figure-1-blue.png"),
+    here::here("./figs/fig-1/figure-1.png"),
     all_panels,
     dpi = 300,
     height = 14, width = 17
