@@ -136,6 +136,12 @@ ggsave(
     richness_eidr_map,
     width = 8, height = 5
 )
+ggsave(
+    here::here("./figs/fig-1/map-hi-def.png"),
+    richness_eidr_map,
+    width = 8, height = 5,
+    dpi = 600
+)
 
 # hockey stick timeseries ======================================================
 
@@ -386,7 +392,7 @@ temperature_plot <- ggplot() +
         ), linewidth = 0.8
     ) +
     scale_colour_gradient(
-        bquote("Atmospheric" ~ CO[2] * ""),
+        bquote("Atmospheric" ~ CO[2] * " (ppm)"),
         # paste0("Atmospheric ", expression(paste(CO^2)), " (ppm)"),
         low = "#f3d567", high = "#b80422",
         limits = c(275, 407)
@@ -397,7 +403,7 @@ temperature_plot <- ggplot() +
     ) +
     theme(
         legend.position = "inside",
-        legend.position.inside = c(0.3, 0.8)
+        legend.position.inside = c(0.35, 0.8)
     ) +
     scale_x_continuous(
         breaks = seq(from = 1600, to = 2020, by = 50)
