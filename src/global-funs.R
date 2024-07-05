@@ -2,6 +2,16 @@
 #' AUTHOR: Cole Brookson
 #' DATE: 19 June 2024
 
+#' Calculate standard error
+#'
+#' @param x vector of values
+#'
+#' @return numeric value
+#' @export
+std_err <- function(x) {
+    return(sd(x, na.rm = TRUE) / sqrt(length(x)))
+}
+
 #' Foundation Theme
 #'
 #' This theme is designed to be a foundation from which to build new

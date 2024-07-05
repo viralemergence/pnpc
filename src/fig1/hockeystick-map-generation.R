@@ -329,7 +329,11 @@ re_baselined_temp <- temperature %>%
 
 # clean and summarize the CO2 data
 co2_observed <- co2_observed %>%
-    dplyr::group_by()
+    dplyr::group_by(year) %>%
+    dplyr::summarize(
+        ppm_mean = mean(ppm),
+        ppm_sterr = std_err(ppm)
+    )
 
 co2_reconstructed <- co2_reconstructed %>%
     dplyr::rename(year = Year, median = `50%`, lo = `2.5%`, hi = `97.5%`) %>%
