@@ -43,10 +43,10 @@ co2_reconstructed <- readr::read_delim(
     here::here("./data/recreation/data-from-frank-etal-2010.txt"),
     delim = "\t"
 )
-co2_observed <- readr::read_delim(
-    here::here("./data/recreation/data-from-lan-etal-2024.txt"),
-    delim = "\t",
-    skip = 38
+co2_observed <- readr::read_csv(
+    here::here("./data/recreation/data-from-lan-etal-2024.csv"),
+    skip = 32,
+    col_names = c("year", "month", "day", "decimal", "ppm")
 )
 spillover <- readr::read_csv(
     here::here("./data/recreation/data-from-meadows-etal-2023.csv")
@@ -328,7 +328,10 @@ re_baselined_temp <- temperature %>%
     )
 
 # clean and summarize the CO2 data
-co2 <- co2 %>%
+co2_observed <- co2_observed %>%
+    dplyr::group_by()
+
+co2_reconstructed <- co2_reconstructed %>%
     dplyr::rename(year = Year, median = `50%`, lo = `2.5%`, hi = `97.5%`) %>%
     dplyr::filter(year > 1600)
 
