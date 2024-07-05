@@ -145,11 +145,11 @@ ggsave(
 extinction <- extinction %>%
     dplyr::mutate(
         date_range = as.factor(dplyr::case_when(
-            date_range_start == 1500 ~ "1500 - 1600",
-            date_range_start == 1600 ~ "1600 - 1700",
-            date_range_start == 1700 ~ "1700 - 1800",
-            date_range_start == 1800 ~ "1800 - 1900",
-            date_range_start == 1900 ~ "1900 - 2010",
+            date_range_start == 1500 ~ "1550",
+            date_range_start == 1600 ~ "1650",
+            date_range_start == 1700 ~ "1750",
+            date_range_start == 1800 ~ "1850",
+            date_range_start == 1900 ~ "1955",
         )),
         taxa = factor(taxa, levels = c(
             "all_verts", "birds", "mammals", "other_verts", "background"
@@ -173,8 +173,8 @@ extinctions_plot <- ggplot() +
     scale_color_manual(
         name = "Taxa",
         values = c(
-            MoMAColors::moma.colors("Exter")[c(2, 5, 7, 9)],
-            # MoMAColors::moma.colors("Flash")[c(4, 6)],
+            MoMAColors::moma.colors("OKeeffe")[c(1, 4)],
+            MoMAColors::moma.colors("Flash")[c(2, 4)],
             "grey80"
         ),
         labels = c(
@@ -197,7 +197,7 @@ extinctions_plot <- ggplot() +
         values = c("dashed", "solid")
     ) +
     labs(
-        x = "Date Range",
+        x = "Date Range Midpoint",
         y = "Cumulative Extinctions as % of IUCN-evaluated Species"
     ) +
     theme(
@@ -266,12 +266,11 @@ spillover_plot <- ggplot() +
     labs(x = "Year", y = "Reported Spillover Events") +
     scale_fill_manual(
         name = "Credible Interval",
-        values = c(MoMAColors::moma.colors("Flash")[c(1, 3, 5, 7)])
+        values = c(MoMAColors::moma.colors("Ernst")[c(4, 6, 7, 8)])
     ) +
     scale_x_continuous(
         breaks = c(
-            1965, 1970, 1975, 1980, 1985, 1990, 1995, 2000, 2005, 2010,
-            2015, 2020
+            1965, 1975, 1985, 1995, 2005, 2015, 2020
         )
     ) +
     theme(
@@ -339,14 +338,28 @@ co2_observed <- co2_observed %>%
         up_ci = ppm_mean + (1.96 * ppm_sterr),
         lo_ci = ppm_mean - (1.96 * ppm_sterr)
     )
-
 co2_reconstructed <- co2_reconstructed %>%
     dplyr::group_by(Year) %>%
     dplyr::summarise(
         mean = mean(dplyr::c_across(ALL_50_full:ALL_200), na.rm = TRUE)
     )
-ggplot() +
-    geom_line(data = co2_reconstructed, aes(x = Year, y = mean))
+# put the two together, deferring to the observed ones
+co2_df <- data.frame(
+    year = c(
+        co2_reconstructed$Year[which(co2_reconstructed$Year < 1974)],
+        co2_observed$year
+    ),
+    ppm = c(
+        co2_reconstructed$mean[which(co2_reconstructed$Year < 1974)],
+        co2_observed$ppm_mean
+    )
+)
+# join the temperature data with the co2 data
+re_baselined_temp <- dplyr::left_join(
+    re_baselined_temp,
+    co2_df,
+    by = "year"
+)
 
 ### plotting ===================================================================
 temperature_plot <- ggplot() +
@@ -358,7 +371,7 @@ temperature_plot <- ggplot() +
         data = re_baselined_temp[which(re_baselined_temp$year < 1850), ],
         aes(
             x = year, ymin = lo_ci, ymax = hi_ci
-        ), fill = "#eeddf7", alpha = 0.6
+        ), fill = "#faedbf", alpha = 0.6
     ) +
     geom_line(
         data = re_baselined_temp[which(re_baselined_temp$year < 1850), ],
@@ -369,13 +382,14 @@ temperature_plot <- ggplot() +
     geom_line(
         data = re_baselined_temp[which(re_baselined_temp$year >= 1850), ],
         aes(
-            x = year, y = single_val, colour = single_val
+            x = year, y = single_val, colour = ppm
         ), linewidth = 0.8
     ) +
     scale_colour_gradient(
-        "Median Anomaly °C",
-        low = "#e4d1f0", high = "#3b0b59",
-        limits = c(-0.1, 1.32)
+        bquote("Atmospheric" ~ CO[2] * " (ppm)"),
+        # paste0("Atmospheric ", expression(paste(CO^2)), " (ppm)"),
+        low = "#f3d567", high = "#b80422",
+        limits = c(275, 407)
     ) +
     theme_base() +
     labs(
@@ -419,7 +433,7 @@ all_panels <-
     )
 
 ggsave(
-    here::here("./figs/fig-1/figure-1.png"),
+    here::here("./figs/fig-1/figure-1-purple.png"),
     all_panels,
     dpi = 300,
     height = 16, width = 18
