@@ -104,8 +104,24 @@ richness_eidr_map <- ggplot() +
     theme_base() +
     scale_fill_gradientn(
         "Mammal Hosts",
-        colors = rev(MoMAColors::moma.colors("OKeeffe"))
+        colors = rev(MoMAColors::moma.colors("OKeeffe")),
+        guide = guide_colorbar(order = 1)
     ) +
+    theme(
+        legend.position = "inside",
+        legend.position.inside = c(0.22, 0.12),
+        legend.box = "horizontal",
+        legend.direction = "horizontal",
+        legend.title.position = "top",
+        legend.background = element_rect(fill = alpha("white", 0.2)),
+        legend.key = element_rect(fill = NA),
+        legend.title.align = 0.5,
+        legend.box.just = "bottom",
+        legend.text = element_text(size = rel(1))
+    ) +
+    # guides(
+    #     fill = guide_colorbar(order = 1)
+    # ) +
     ggnewscale::new_scale_fill() +
     geom_point(
         data = eidr,
@@ -113,9 +129,11 @@ richness_eidr_map <- ggplot() +
             x = Longitude, y = Latitude, shape = `Pathogen Type`,
             fill = `Pathogen Type`
         ),
-        color = "black", stroke = 0.6, size = 2
+        color = "black", stroke = 0.6, size = 3
     ) +
-    scale_shape_manual(values = c(21, 22, 23)) +
+    scale_shape_manual(
+        values = c(21, 22, 23)
+    ) +
     scale_fill_manual(values = c(
         MoMAColors::moma.colors("Budnitz")[c(2)],
         MoMAColors::moma.colors("Flash")[c(3)],
@@ -123,19 +141,16 @@ richness_eidr_map <- ggplot() +
     )) +
     xlab(NULL) +
     ylab(NULL) +
-    guides(
-        fill = guide_legend(
-            override.aes = list(
-                size = 4
-            )
-        )
-    ) +
-    theme(
-        legend.location = "inside",
-        legend.position.inside = c(0.1, 0.3),
-        legend.text = element_text(size = rel(1)),
-        legend.title = element_text(size = rel(1.2))
-    )
+    guides(shape = guide_legend(override.aes = list(size = 4)))
+# guides(
+#     fill = guide_legend(
+#         override.aes = list(
+#             legend.title.position = "left",
+#             legend.key.size = 3
+#             # order = 2
+#         )
+#     )
+# )
 ggsave(
     here::here("./figs/fig-1/map.png"),
     richness_eidr_map,
@@ -447,5 +462,5 @@ ggsave(
     here::here("./figs/fig-1/figure-1.png"),
     all_panels,
     dpi = 300,
-    height = 14, width = 17
+    height = 14, width = 16
 )
