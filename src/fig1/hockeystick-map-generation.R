@@ -7,7 +7,7 @@ library(here)
 library(readr)
 library(ggplot2)
 library(magrittr)
-library(rstanram)
+library(rstanarm)
 library(bayesplot)
 library(modelr)
 library(ggdist)
@@ -141,16 +141,9 @@ richness_eidr_map <- ggplot() +
     )) +
     xlab(NULL) +
     ylab(NULL) +
-    guides(shape = guide_legend(override.aes = list(size = 4)))
-# guides(
-#     fill = guide_legend(
-#         override.aes = list(
-#             legend.title.position = "left",
-#             legend.key.size = 3
-#             # order = 2
-#         )
-#     )
-# )
+    guides(shape = guide_legend(override.aes = list(size = 4))) +
+    ggtitle("Hotspots & hosts of emerging infectious diseases")
+
 ggsave(
     here::here("./figs/fig-1/map.png"),
     richness_eidr_map,
@@ -228,8 +221,10 @@ extinctions_plot <- ggplot() +
     ) +
     theme(
         legend.position = "inside",
-        legend.position.inside = c(0.3, 0.8)
-    )
+        legend.position.inside = c(0.3, 0.95),
+        legend.justification = "top"
+    ) +
+    ggtitle("Biodiversity loss")
 ggsave(
     here::here("./figs/fig-1/extinctions.png"),
     extinctions_plot,
@@ -301,9 +296,11 @@ spillover_plot <- ggplot() +
     ) +
     theme(
         legend.position = "inside",
-        legend.position.inside = c(0.3, 0.8),
+        legend.position.inside = c(0.3, 0.95),
+        legend.justification = "top"
         # legend.title = element_text(hjust = 0.5)
-    )
+    ) +
+    ggtitle("Disease emergence")
 ggsave(
     here::here("./figs/fig-1/spillover.png"),
     spillover_plot,
@@ -419,11 +416,12 @@ temperature_plot <- ggplot() +
     ) +
     theme_base() +
     labs(
-        x = "Year", y = "Temperature anomaly °C from \n1600-1699 baseline",
+        x = "Year", y = "Temperature Anomaly °C From \n1600-1699 Baseline",
     ) +
     theme(
         legend.position = "inside",
-        legend.position.inside = c(0.4, 0.8)
+        legend.position.inside = c(0.4, 0.95),
+        legend.justification = "top"
     ) +
     scale_x_continuous(
         breaks = seq(from = 1600, to = 2020, by = 100)
@@ -431,7 +429,8 @@ temperature_plot <- ggplot() +
     scale_y_continuous(
         breaks = seq(from = -0.5, to = 1.5, by = 0.5),
         limits = c(-0.7, 1.6)
-    )
+    ) +
+    ggtitle("Climate Change")
 ggsave(
     here::here("./figs/fig-1/temperature.png"),
     temperature_plot,
@@ -449,12 +448,15 @@ ggsave(
 )
 
 all_panels <-
-    (spillover_plot + extinctions_plot + temperature_plot) / richness_eidr_map +
+    (spillover_plot +
+        extinctions_plot +
+        temperature_plot) /
+    (richness_eidr_map) +
     patchwork::plot_layout(
         heights = c(0.6, -1),
         widths = c(0.33, 0.33, 0.33, 1)
     ) +
-    patchwork::plot_annotation(
+    plot_annotation(
         tag_levels = "A"
     )
 
@@ -462,5 +464,5 @@ ggsave(
     here::here("./figs/fig-1/figure-1.png"),
     all_panels,
     dpi = 300,
-    height = 14, width = 16
+    height = 14, width = 15
 )
