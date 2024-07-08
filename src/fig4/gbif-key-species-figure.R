@@ -30,7 +30,10 @@ ne_sf <- rnaturalearth::ne_coastline(returnclass = "sf")
 
 ## data cleaning ===============================================================
 #' there's some occurent records in weird places up in north america that seem
-#' wrong
+#' wrong -- it was easiest to diagnose this in the web viewer, so we've
+#' downloaded all occurences where the country code doesn't match (e.g. there's
+#' a bat in the allutian islands apparently but the geolocation says Australia)
+#' and we just use that to filter out the bad observations
 names(rhi)
 unique(rhi$issue)
 clean_rhi <- rhi %>%
@@ -40,7 +43,11 @@ clean_rhi <- rhi %>%
     "c2e4ea55-bdb6-4555-a091-27158fc15c73",
     "f2a2d90f-8857-42cc-84c5-48b07f7c2f05",
     # this is in the middle of the ocean but is supposed to be south africa
-    "	67cce1c4-f6e8-49be-8cb3-982ba2789fe2"
+    "67cce1c4-f6e8-49be-8cb3-982ba2789fe2",
+    # this one is on Hudson's bay...
+    "urn:catalog:AMNH:Mammals:M-157394",
+    # this is in the alutian islands but supposed to be in australia lol
+    "urn:catalog:AMNH:Mammals:M-154616",
   )) %>%
   CoordinateCleaner::cc_coun(
     x = .,
