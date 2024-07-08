@@ -10,6 +10,7 @@ library(rgbif)
 library(rnaturalearth)
 library(MoMAColors)
 library(figpatch)
+library(patchwork)
 
 source(here::here("./src/global-funs.R"))
 
@@ -54,17 +55,21 @@ clean_rhi <- rhi %>%
   # and a bunch in the LA museum
   dplyr::filter(occurrenceID %notin% bad_bat_LA_obs$occurrenceID)
 
-horsehoe_bat <- ggplot(data = ne_sf) +
+bat_title <- expression(
+  paste(italic("Rhinolophus"), " spp. global occurences")
+)
+bat_map <- ggplot(data = ne_sf) +
   geom_sf() +
   coord_sf() +
   geom_bin2d(
     data = clean_rhi, aes(x = decimalLongitude, y = decimalLatitude),
     binwidth = c(5, 5)
   ) +
-  MoMAColors::scale_fill_moma_c("ustwo",
-    name = "Occurrences",
+  scale_fill_moma_c("ustwo",
+    name = "Occurrences (log scale)",
     trans = "log",
-    breaks = c(1, 10, 100, 1000, 10000, 100000),
+    breaks = c(1, 10, 100, 1000, 8000),
+    labels = c(1, 10, 100, 1000, 8000),
     direction = -1
   ) +
   geom_sf() +
@@ -72,7 +77,21 @@ horsehoe_bat <- ggplot(data = ne_sf) +
   theme_base() +
   xlab("") +
   ylab("") +
-  theme(legend.position = "left", legend.text.position = "left")
+  theme(
+    legend.position = "inside",
+    legend.position.inside = c(0.5, 0.12),
+    legend.box = "horizontal",
+    legend.direction = "horizontal",
+    legend.title.position = "top",
+    legend.background = element_rect(fill = alpha("white", 0.7)),
+    legend.key = element_rect(fill = NA),
+    legend.title = element_text(hjust = 0.5),
+    legend.box.just = "bottom",
+    legend.text = element_text(size = rel(1)),
+    legend.key.width = unit(1.4, "cm"),
+    plot.title = element_text(size = rel(1.5))
+  ) +
+  ggtitle(bat_title)
 
 # Aedes aegypti ================================================================
 
@@ -88,6 +107,9 @@ aed <- occ_download_import(aed_download)
 
 ne_sf <- ne_coastline(returnclass = "sf")
 
+aedes_title <- expression(
+  paste(italic("Aedes aegypti"), " global occurences")
+)
 aedes_map <- ggplot(data = ne_sf) +
   geom_sf() +
   coord_sf() +
@@ -96,20 +118,59 @@ aedes_map <- ggplot(data = ne_sf) +
     binwidth = c(5, 5)
   ) +
   scale_fill_moma_c("ustwo",
-    name = "Occurrences",
+    name = "Occurrences (log scale)",
     trans = "log",
-    breaks = c(1, 10, 100, 1000, 10000, 100000),
+    breaks = c(1, 10, 100, 1000, 8000),
+    labels = c(1, 10, 100, 1000, 8000),
     direction = -1
   ) +
   geom_sf() +
   coord_sf() +
-  theme_light() +
+  theme_base() +
   xlab("") +
   ylab("") +
-  theme(legend.position = "left", legend.text.position = "left")
+  theme(
+    legend.position = "inside",
+    legend.position.inside = c(0.5, 0.12),
+    legend.box = "horizontal",
+    legend.direction = "horizontal",
+    legend.title.position = "top",
+    legend.background = element_rect(fill = alpha("white", 0.7)),
+    legend.key = element_rect(fill = NA),
+    legend.title = element_text(hjust = 0.5),
+    legend.box.just = "bottom",
+    legend.text = element_text(size = rel(1)),
+    legend.key.width = unit(1.4, "cm"),
+    plot.title = element_text(size = rel(1.5))
+  ) +
+  ggtitle(aedes_title)
 
 
 # put the plots all together ===================================================
 
 aedes_img <- figpatch::fig(here::here("./data/GBIF/aedes-image.png"))
 bat_img <- figpatch::fig(here::here("./data/GBIF/bat-image.png"))
+
+
+aedes_together <- patchwork::wrap_plots(aedes_map, aedes_img)
+ggsave(
+  here::here("./figs/fig-4/aedes-plot.png"),
+  aedes_together,
+  width = 12, height = 8
+)
+bats_together <- patchwork::wrap_plots(bat_map, bat_img)
+ggsave(
+  here::here("./figs/fig-4/bats-plot.png"),
+  bats_together,
+  width = 12, height = 8
+)
+fig_4 <- patchwork::wrap_plots(
+  aedes_together, bats_together,
+  nrow = 2,
+  # widths = c(1, 1),
+  heights = c(-1, -1)
+) +
+  patchwork::plot_annotation(tag_levels = "A")
+ggsave(
+  here::here("./figs/")
+)
