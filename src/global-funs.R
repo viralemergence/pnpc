@@ -2,6 +2,8 @@
 #' AUTHOR: Cole Brookson
 #' DATE: 19 June 2024
 
+
+`%notin%` <- Negate(`%in%`)
 #' Calculate standard error
 #'
 #' @param x vector of values
