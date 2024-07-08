@@ -1,5 +1,5 @@
 #' DESCRIPTION: figure for the third box
-#' AUTHOR: Daniel Becker
+#' AUTHOR: Daniel Becker & Cole Brookson
 #' DATE: 19 June 2024
 
 # set up =======================================================================

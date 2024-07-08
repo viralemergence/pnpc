@@ -430,7 +430,7 @@ temperature_plot <- ggplot() +
         breaks = seq(from = -0.5, to = 1.5, by = 0.5),
         limits = c(-0.7, 1.6)
     ) +
-    ggtitle("Climate Change")
+    ggtitle("Climate change")
 ggsave(
     here::here("./figs/fig-1/temperature.png"),
     temperature_plot,
