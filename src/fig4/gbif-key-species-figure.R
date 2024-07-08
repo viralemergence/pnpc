@@ -7,9 +7,9 @@ library(here)
 library(readr)
 library(ggplot2)
 library(rgbif)
-library(CoordinateCleaner)
 library(rnaturalearth)
 library(MoMAColors)
+library(figpatch)
 
 source(here::here("./src/global-funs.R"))
 
@@ -22,7 +22,7 @@ source(here::here("./src/global-funs.R"))
 res_bat <- rgbif::occ_download_get(
   key = "0015768-240626123714530",
   path = here::here("./data/GBIF/"),
-  overwrite = TRUE
+  overwrite = FALSE
 )
 rhi <- rgbif::occ_download_import(res_bat)
 
@@ -34,34 +34,31 @@ ne_sf <- rnaturalearth::ne_coastline(returnclass = "sf")
 #' downloaded all occurences where the country code doesn't match (e.g. there's
 #' a bat in the allutian islands apparently but the geolocation says Australia)
 #' and we just use that to filter out the bad observations
-names(rhi)
-unique(rhi$issue)
+bad_bat <- rgbif::occ_download_get(
+  key = "0017000-240626123714530",
+  path = here::here("./data/GBIF/"),
+  overwrite = FALSE
+)
+bad_bat_LA <- rgbif::occ_download_get(
+  key = "0017081-240626123714530",
+  path = here::here("./data/GBIF/"),
+  overwrite = FALSE
+)
+bad_bat_obs <- rgbif::occ_download_import(bad_bat)
+bad_bat_LA_obs <- rgbif::occ_download_import(bad_bat_LA)
+
 clean_rhi <- rhi %>%
-  dplyr::filter(occurrenceID %notin% c(
-    # looks like it's in the middle of the ocean by tazmania - there's country
-    # code mismatches and they're from a museum
-    "c2e4ea55-bdb6-4555-a091-27158fc15c73",
-    "f2a2d90f-8857-42cc-84c5-48b07f7c2f05",
-    # this is in the middle of the ocean but is supposed to be south africa
-    "67cce1c4-f6e8-49be-8cb3-982ba2789fe2",
-    # this one is on Hudson's bay...
-    "urn:catalog:AMNH:Mammals:M-157394",
-    # this is in the alutian islands but supposed to be in australia lol
-    "urn:catalog:AMNH:Mammals:M-154616",
-  )) %>%
-  CoordinateCleaner::cc_coun(
-    x = .,
-    lat = "decimalLatitude",
-    lon = "decimalLongitude",
-    iso3 = "countryCode",
-    value = "clean"
-  )
+  dplyr::filter(occurrenceID %notin% bad_bat_obs$occurrenceID) %>%
+  # there's also two observatiosn in the americas that are definitely eroneous
+  dplyr::filter(occurrenceID %notin% "MCZ:Mamm:4939") %>%
+  # and a bunch in the LA museum
+  dplyr::filter(occurrenceID %notin% bad_bat_LA_obs$occurrenceID)
 
 horsehoe_bat <- ggplot(data = ne_sf) +
   geom_sf() +
   coord_sf() +
   geom_bin2d(
-    data = rhi, aes(x = decimalLongitude, y = decimalLatitude),
+    data = clean_rhi, aes(x = decimalLongitude, y = decimalLatitude),
     binwidth = c(5, 5)
   ) +
   MoMAColors::scale_fill_moma_c("ustwo",
@@ -85,13 +82,13 @@ horsehoe_bat <- ggplot(data = ne_sf) +
 aed_download <- rgbif::occ_download_get(
   key = "0015770-240626123714530",
   path = here::here("./data/GBIF/"),
-  overwrite = TRUE
+  overwrite = FALSE
 )
 aed <- occ_download_import(aed_download)
 
 ne_sf <- ne_coastline(returnclass = "sf")
 
-ggplot(data = ne_sf) +
+aedes_map <- ggplot(data = ne_sf) +
   geom_sf() +
   coord_sf() +
   geom_bin2d(
@@ -110,3 +107,9 @@ ggplot(data = ne_sf) +
   xlab("") +
   ylab("") +
   theme(legend.position = "left", legend.text.position = "left")
+
+
+# put the plots all together ===================================================
+
+aedes_img <- figpatch::fig(here::here("./data/GBIF/aedes-image.png"))
+bat_img <- figpatch::fig(here::here("./data/GBIF/bat-image.png"))
