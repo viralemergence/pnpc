@@ -68,8 +68,8 @@ bat_map <- ggplot(data = ne_sf) +
   scale_fill_moma_c("ustwo",
     name = "Occurrences (log scale)",
     trans = "log",
-    breaks = c(1, 10, 100, 1000, 8000),
-    labels = c(1, 10, 100, 1000, 8000),
+    # breaks = c(1, 10, 100, 1000, 8000, 10000),
+    # labels = c(1, 10, 100, 1000, 8000, 10000),
     direction = -1
   ) +
   geom_sf() +
@@ -79,7 +79,7 @@ bat_map <- ggplot(data = ne_sf) +
   ylab("") +
   theme(
     legend.position = "inside",
-    legend.position.inside = c(0.5, 0.12),
+    legend.position.inside = c(0.5, 0.15),
     legend.box = "horizontal",
     legend.direction = "horizontal",
     legend.title.position = "top",
@@ -110,19 +110,25 @@ ne_sf <- ne_coastline(returnclass = "sf")
 aedes_title <- expression(
   paste(italic("Aedes aegypti"), " global occurences")
 )
-aedes_map <- ggplot(data = ne_sf) +
+ggplot(data = ne_sf) +
   geom_sf() +
   coord_sf() +
   geom_bin2d(
     data = aed, aes(x = decimalLongitude, y = decimalLatitude),
     binwidth = c(5, 5)
   ) +
+  scale_fill_gradientn(
+    "Mammal Hosts",
+    colors = rev(MoMAColors::moma.colors("OKeeffe")),
+    guide = guide_colorbar(order = 1)
+  ) +
   scale_fill_moma_c("ustwo",
     name = "Occurrences (log scale)",
     trans = "log",
-    breaks = c(1, 10, 100, 1000, 8000),
-    labels = c(1, 10, 100, 1000, 8000),
-    direction = -1
+    # breaks = c(1, 10, 100, 1000, 8000, 10000),
+    # labels = c(1, 10, 100, 1000, 8000, 10000),
+    direction = -1,
+    limits = c(0, 10000)
   ) +
   geom_sf() +
   coord_sf() +
@@ -131,7 +137,7 @@ aedes_map <- ggplot(data = ne_sf) +
   ylab("") +
   theme(
     legend.position = "inside",
-    legend.position.inside = c(0.5, 0.12),
+    legend.position.inside = c(0.5, 0.15),
     legend.box = "horizontal",
     legend.direction = "horizontal",
     legend.title.position = "top",
@@ -151,6 +157,12 @@ aedes_map <- ggplot(data = ne_sf) +
 aedes_img <- figpatch::fig(here::here("./data/GBIF/aedes-image.png"))
 bat_img <- figpatch::fig(here::here("./data/GBIF/bat-image.png"))
 
+
+ggpubr::ggarrange(
+  aedes_together, bats_together,
+  labels = c("A", "B"),
+  common.legend = TRUE, legend = "bottom"
+)
 
 aedes_together <- patchwork::wrap_plots(aedes_map, aedes_img)
 ggsave(
@@ -172,5 +184,7 @@ fig_4 <- patchwork::wrap_plots(
 ) +
   patchwork::plot_annotation(tag_levels = "A")
 ggsave(
-  here::here("./figs/")
+  here::here("./figs/fig-4/figure-4.png"),
+  fig_4,
+  height = 12.5, width = 14
 )
