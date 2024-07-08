@@ -13,7 +13,7 @@ library(figpatch)
 library(patchwork)
 
 source(here::here("./src/global-funs.R"))
-
+options(scipen = 1000)
 
 # Horseshoe bats ===============================================================
 
@@ -65,12 +65,15 @@ bat_map <- ggplot(data = ne_sf) +
     data = clean_rhi, aes(x = decimalLongitude, y = decimalLatitude),
     binwidth = c(5, 5)
   ) +
-  scale_fill_moma_c("ustwo",
+  scale_fill_gradient(
     name = "Occurrences (log scale)",
+    # colors = rev(MoMAColors::moma.colors("ustwo")),
+    low = "#f6dcf1", high = "#750e5f",
     trans = "log",
-    # breaks = c(1, 10, 100, 1000, 8000, 10000),
-    # labels = c(1, 10, 100, 1000, 8000, 10000),
-    direction = -1
+    breaks = c(1, 100, 20000),
+    # labels = scales::cut_short_scale(c(1, 10, 100, 1000, 20000)),
+    labels = scales::label_scientific()
+    # limits = c(1, 15000)
   ) +
   geom_sf() +
   coord_sf() +
@@ -87,7 +90,7 @@ bat_map <- ggplot(data = ne_sf) +
     legend.key = element_rect(fill = NA),
     legend.title = element_text(hjust = 0.5),
     legend.box.just = "bottom",
-    legend.text = element_text(size = rel(1)),
+    legend.text = element_text(size = rel(0.7)),
     legend.key.width = unit(1.4, "cm"),
     plot.title = element_text(size = rel(1.5))
   ) +
@@ -110,25 +113,21 @@ ne_sf <- ne_coastline(returnclass = "sf")
 aedes_title <- expression(
   paste(italic("Aedes aegypti"), " global occurences")
 )
-ggplot(data = ne_sf) +
+aedes_map <- ggplot(data = ne_sf) +
   geom_sf() +
   coord_sf() +
   geom_bin2d(
     data = aed, aes(x = decimalLongitude, y = decimalLatitude),
     binwidth = c(5, 5)
   ) +
-  scale_fill_gradientn(
-    "Mammal Hosts",
-    colors = rev(MoMAColors::moma.colors("OKeeffe")),
-    guide = guide_colorbar(order = 1)
-  ) +
-  scale_fill_moma_c("ustwo",
+  scale_fill_gradient(
     name = "Occurrences (log scale)",
+    # colors = rev(MoMAColors::moma.colors("ustwo")),
+    low = "#9bdced", high = "#134d5b",
     trans = "log",
-    # breaks = c(1, 10, 100, 1000, 8000, 10000),
-    # labels = c(1, 10, 100, 1000, 8000, 10000),
-    direction = -1,
-    limits = c(0, 10000)
+    breaks = c(1, 100, 5000),
+    labels = scales::label_scientific()
+    # limits = c(1, 15000)
   ) +
   geom_sf() +
   coord_sf() +
@@ -141,11 +140,11 @@ ggplot(data = ne_sf) +
     legend.box = "horizontal",
     legend.direction = "horizontal",
     legend.title.position = "top",
-    legend.background = element_rect(fill = alpha("white", 0.7)),
+    legend.background = element_rect(fill = alpha("white", 0.8)),
     legend.key = element_rect(fill = NA),
     legend.title = element_text(hjust = 0.5),
     legend.box.just = "bottom",
-    legend.text = element_text(size = rel(1)),
+    legend.text = element_text(size = rel(0.7), angle = -90),
     legend.key.width = unit(1.4, "cm"),
     plot.title = element_text(size = rel(1.5))
   ) +
@@ -157,13 +156,6 @@ ggplot(data = ne_sf) +
 aedes_img <- figpatch::fig(here::here("./data/GBIF/aedes-image.png"))
 bat_img <- figpatch::fig(here::here("./data/GBIF/bat-image.png"))
 
-
-ggpubr::ggarrange(
-  aedes_together, bats_together,
-  labels = c("A", "B"),
-  common.legend = TRUE, legend = "bottom"
-)
-
 aedes_together <- patchwork::wrap_plots(aedes_map, aedes_img)
 ggsave(
   here::here("./figs/fig-4/aedes-plot.png"),
@@ -174,17 +166,19 @@ bats_together <- patchwork::wrap_plots(bat_map, bat_img)
 ggsave(
   here::here("./figs/fig-4/bats-plot.png"),
   bats_together,
-  width = 12, height = 8
+  width = 20, height = 8
 )
-fig_4 <- patchwork::wrap_plots(
+fig_4 <- ggpubr::ggarrange(
   aedes_together, bats_together,
+  labels = c("A", "B"),
   nrow = 2,
-  # widths = c(1, 1),
-  heights = c(-1, -1)
+  font.label = list(size = 28),
+  widths = 1,
+  heights = 1
 ) +
-  patchwork::plot_annotation(tag_levels = "A")
+  ggpubr::bgcolor("white")
 ggsave(
   here::here("./figs/fig-4/figure-4.png"),
   fig_4,
-  height = 12.5, width = 14
+  height = 10, width = 14
 )
