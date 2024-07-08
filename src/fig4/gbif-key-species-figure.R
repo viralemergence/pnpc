@@ -144,7 +144,7 @@ aedes_map <- ggplot(data = ne_sf) +
     legend.key = element_rect(fill = NA),
     legend.title = element_text(hjust = 0.5),
     legend.box.just = "bottom",
-    legend.text = element_text(size = rel(0.7), angle = -90),
+    legend.text = element_text(size = rel(0.7)),
     legend.key.width = unit(1.4, "cm"),
     plot.title = element_text(size = rel(1.5))
   ) +
@@ -180,5 +180,6 @@ fig_4 <- ggpubr::ggarrange(
 ggsave(
   here::here("./figs/fig-4/figure-4.png"),
   fig_4,
-  height = 10, width = 14
+  height = 10, width = 14,
+  dpi = 300
 )
