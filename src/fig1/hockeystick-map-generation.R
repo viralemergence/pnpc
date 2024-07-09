@@ -27,7 +27,27 @@ clo_vir <- readr::read_csv(here::here("./data/clover/clover-1.0-viruses.csv"))
 clo_other <- readr::read_csv(
     here::here("./data/clover/clover-1.0-hel-proto-fungi.csv")
 )
-iucn <- sf::st_read(here::here("./data/IUCN/"))
+# need to make sure we're all using the same IUCN
+tryCatch(
+    {
+        iucn <- sf::read_sf(here::here("./data/IUCN/"))
+    },
+    warning = function(w) {
+        print() # dummy warning function to suppress the output of warnings
+    },
+    error = function(err) {
+        print(
+            "Could not read data from current directory, ",
+            "attempting download..."
+        )
+        tryCatch({
+            source(here::here("./__main.R"))
+        })
+        warning <- function(w) {
+            print() # dummy warning function to suppress the output of warnings
+        }
+    }
+)
 eidr <- readr::read_csv("./data/recreation/data-from-eidr.csv")
 
 # data for the hockeystick partss
