@@ -1,7 +1,66 @@
-# Pathogens & global change
-## Cole B. Brookson
-## 08 July 2024
+---
+title: Pathogens & global change figure report
+author: Cole B. Brookson
+output: html_document
+---
 
 ## Accompanying information 
 
-This document contains a brief run-down of all the analysis-related figures used 
+This document contains a brief run-down of all the analysis-related figures in the main text of the pathogens & planetary change manuscript referenced in the root README. 
+
+### Figure 1 
+
+Figure 1 is the figure involving the most data generated in other publications. For details on how it was created, see `./data/recreation/README.md` or Text S2 in the main text of the manuscript. 
+
+```{r}
+library(here)
+source(here::here("./src/fig1/hockeystick-map-generation.R"))
+all_panels + patchwork::plot_annotation(
+    caption = paste0(
+        "Spillover events of high-consequence zoonotic diseases
+        follow an upward trend similar to the “hockey stick” trends of
+        iodiversity loss and climate change; however, there is less consensus
+        that the observed trend in spillover rates is independent of
+        improvements in outbreak detection. Novel human infectious diseases
+        emerge more often in regions of the world with higher mammal
+        biodiversity, but are also more likely to be detected by surveillance
+        systems and described for the first time in Europe and North America.
+        For a full explanation of data sources, see Text S2 in the main paper."
+    )
+)
+```
+
+### Figure 4 
+
+Figure 4 is based on data from GBIF exclusively. 
+
+```{r}
+source(here::here("./src/fig4/gbif-key-species.R"))
+fig_4 + patchwork::plot_annotation(
+    caption = paste0(
+        "Biodiversity infrastructure is both a foundational resource for
+        long-term ecological research and an open source of real-time
+        epidemic intelligence. Millions of geolocated occurrence records
+        exist for major disease vectors (A: the yellow fever mosquito
+        [Aedes aegypti]) and wildlife reservoirs (B: horseshoe bats
+        [Rhinolophus spp.], the evolutionary reservoirs of SARS-like
+        coronaviruses). Museum collections of these organisms are also an
+        important resource for both fundamental biological research and viral
+        discovery. (Image sources: GBIF). "
+    )
+)
+```
+
+### Figure from Box 2
+
+Box two discusses data opportunities and data gaps. The figure makes use of IUCN data and data from the Virion dataset. 
+
+```{r}
+source(here::here("./src/box2/data-and-data-gaps.R"))
+all_panels + patchwork::plot_annotation(
+    caption = paste0(
+        "Proportion of mammal species without any known viruses, by taxonomy
+        (for the ten most speciose orders) and geography."
+    )
+)
+```

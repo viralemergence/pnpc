@@ -1,3 +1,7 @@
+#' DESCRIPTION: in-text information pulled from Jones et al. (2008).
+#' AUTHOR: Colin Carlson
+#' DATE: 08 July 2024
+
 
 library(tidyverse)
 jo <- read_csv("./data/recreation/data-from-jones-2008.csv")
