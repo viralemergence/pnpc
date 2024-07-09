@@ -27,7 +27,7 @@ This work is licensed under a
 
 ## Accompanying information 
 
-This document contains a brief run-down of all the analysis-related figures in the main text of the pathogens & planetary change manuscript referenced in the root README. 
+This document contains a brief run-down of all the analysis-related figures in the main text of the pathogens & planetary change manuscript referenced in the root README. The code to generate each of the figures can be found in their respectively named subfolders in the `src` folder. 
 
 ### Figure 1 
 
@@ -38,14 +38,14 @@ Figure 1 is the figure involving the most data generated in other publications. 
 
 ### Figure 4 
 
-Figure 4 is based on data from GBIF exclusively. 
+Figure 4 is based on data from GBIF exclusively. The download of those data are down directly in the assocatiated script. Note however that accessing GBIF to download the data anew is not just click & run, as it's specific to each GBIF user's profile, and a user would need to configure their R environment to handle the GBIF record pulling if you wanted a fresh version from online. We accessed our version for this paper on 07 July 2024. 
 
 <img src="https://github.com/viralemergence/pnpc/blob/main/figs/fig-4/figure-4.png">
 
 
 ### Figure from Box 2
 
-Box two discusses data opportunities and data gaps. The figure makes use of IUCN data and data from the Virion dataset. 
+Box two discusses data opportunities and data gaps. The figure makes use of IUCN data and data from the Virion dataset, the IUCN data is mentioned above, and here we use a flat file version of Virion for consistency. Updated versions of Virion can be found [here](https://www.viralemergence.org/virion). 
 
 <img src="https://github.com/viralemergence/pnpc/blob/main/figs/box-3/side-by-side.png">
 
