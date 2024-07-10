@@ -43,3 +43,7 @@ jo %>% filter(!DrugRes==1,
                %>% 
   filter(PathType == 'virus') %>%
   pull(ZooType) %>% table()
+
+# Easter egg: Vector-borne diseases overwhelmingly dominate the land use associated pathogens in Jones
+
+jo %>% filter(Driver == "Land use changes") %>% pull(TranMode) %>% table() %>% prop.table()
