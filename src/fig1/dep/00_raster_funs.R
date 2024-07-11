@@ -15,7 +15,7 @@ range_01 <- function(x) {
 #' from the IUCN itself
 #' @return raster extent with all the count data present for the mammals
 raster_extract <- function(iucn_data) {
-    mam_raster <- fasterize::raster(iucn_shp, res = 1 / 6)
+    mam_raster <- fasterize::raster(iucn_data, res = 1 / 6)
     return(mam_raster)
 }
 
@@ -30,7 +30,7 @@ raster_extract <- function(iucn_data) {
 #' which includes the count data of all the mammals in each raster cell.
 #' @return mammals object that can be plotted
 init_data_ob <- function(iucn_data, mam_raster) {
-    mammals <- fasterize::fasterize(iucn_shp, mam_raster, fun = "count")
+    mammals <- fasterize::fasterize(iucn_data, mam_raster, fun = "count")
     # data <- mammals@data@values # keep only values not the whole object
     return(mammals)
 }

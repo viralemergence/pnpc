@@ -12,6 +12,7 @@ library(patchwork)
 library(MetBrewer)
 
 source(here::here("./src/global-funs.R"))
+source(here::here("./src/fig1/dep/00_raster_funs.R"))
 
 vir <- vroom::vroom(here::here("./data/virion/virion-zipped.csv.gz"))
 # need to make sure we're all using the same IUCN
@@ -39,6 +40,10 @@ iucn <- iucn %>%
   dplyr::mutate(binomial = stringr::str_to_lower(binomial)) %>%
   dplyr::mutate(anyViruses = as.numeric(binomial %in% vir$Host))
 
+mam_raster <- raster_extract(iucn_data = iucn) # this is the full extent we want
+mammals <- init_data_ob(iucn, mam_raster) # the data object
+plot(mammals)
+
 # Bar plot =====================================================================
 
 orderCounts <- iucn %>%
@@ -57,22 +62,6 @@ top10orders <- orderCounts %>%
   arrange(-n) %>%
   pull(order_)
 
-# orderCounts %>%
-#   filter(order_ %in% top10orders) %>%
-#   mutate(order_ = factor(order_, levels = rev(top10orders))) %>%
-#   rename(count = n) %>%
-#   mutate(anyViruses = factor(anyViruses, levels = c('0', '1'))) %>%
-#   ggplot(aes(fill=anyViruses, y = count, x = `order_`)) +
-#   geom_bar(position="stack", stat="identity") +
-#   coord_flip() +
-#   xlab('Mammal orders (top 10 by descending species richness)') +
-#   ylab('Number of species') +
-#   theme_bw() +
-#   theme(legend.position = c(0.6, 0.1),
-#         legend.title = element_blank(),
-#         legend.box.background = element_rect(colour = "black")) +
-#   scale_fill_manual(values = c('lightgrey', 'darkblue'), labels = c("No viruses known", "Viruses recorded")) -> g1
-
 ## DB VERSION
 g1 <- orderCounts %>%
   filter(order_ %in% top10orders) %>%
@@ -80,7 +69,7 @@ g1 <- orderCounts %>%
   rename(count = n) %>%
   mutate(anyViruses = factor(anyViruses, levels = c("0", "1"))) %>%
   ggplot(aes(fill = anyViruses, y = count, x = `order_`)) +
-  geom_bar(position = "stack", stat = "identity") +
+  geom_bar(position = "stack", stat = "identity", colour = "black") +
   # coord_flip() +
   xlab("Mammal orders (top 10 by descending species richness)") +
   ylab("Number of species") +
@@ -88,6 +77,7 @@ g1 <- orderCounts %>%
   theme(
     legend.position = "top",
     legend.title = element_blank(),
+    legend.text = element_text(size = 12), # change legend text font size
     axis.text.x = element_text(angle = 45, hjust = 1),
     axis.title.x = element_blank(),
     legend.margin = margin(0, 0, 0, 0),
@@ -97,43 +87,34 @@ g1 <- orderCounts %>%
   #      legend.title = element_blank(),
   #      legend.box.background = element_rect(colour = "black")) +
   scale_fill_manual(
-    values = c("#d3d3d3b4", met.brewer("Signac")[8]),
+    values = c("grey90", "#3facbdee"),
     labels = c("No viruses known", "Viruses recorded")
   )
 
 ## Map
 
-iucnno <- iucn %>% filter(anyViruses == 0)
-iucnyes <- iucn %>% filter(anyViruses == 1)
+iucnno <- iucn %>% dplyr::filter(anyViruses == 0)
+iucnyes <- iucn %>% dplyr::filter(anyViruses == 1)
 
-mraster <- raster(iucn, res = 1 / 6)
+# get the fasterized version of the mammals with no viruses
+noraster <- fasterize(iucnno, mraster, fun = "count")
+plot(noraster)
 
-noraster <- fasterize(iucnno, mraster, fun = "sum")
-yesraster <- fasterize(iucnyes, mraster, fun = "sum")
+# need to fill the NA's that should actually be zero's as zeros
+summary(noraster@data@values)
+noraster@data@values[which(
+  is.na(noraster@data@values) & !is.na(allraster@data@values)
+)] <- 0
 
-diff <- (noraster - yesraster)
-# plot(diff)
+# now just get the raster with all the mammals
+allraster <- fasterize(iucn, mraster, fun = "count")
+plot(allraster)
 
-propno <- (noraster) / (noraster + yesraster)
+propno <- (noraster) / (allraster)
 plot(propno)
+summary(propno@data@values)
 
 scaleddiffdf <- raster::as.data.frame(propno, xy = TRUE)
-# scaleddiffdf %>%
-#   ggplot(aes(x = x, y = y, fill = layer)) +
-#   geom_raster() + coord_sf() +
-#   theme_void() +
-
-## DB VERSION
-g2 <- scaleddiffdf %>%
-  ggplot(aes(x = x, y = y, fill = layer)) +
-  geom_raster() +
-  coord_sf() +
-  theme_base() +
-  theme(legend.position = "top") +
-  scale_fill_gradientn(
-    colors = met.brewer("Morgenstern"),
-    name = "Proportion with\nno known viruses"
-  )
 
 g22 <- ggplot() +
   tidyterra::stat_spatraster(data = terra::rast(propno)) +
@@ -144,19 +125,20 @@ g22 <- ggplot() +
     legend.position = "top",
     legend.key.size = unit(2, "cm"), # change legend key size
     legend.key.height = unit(1, "cm"), # change legend key height
-    legend.key.width = unit(1, "cm"), # change legend key width
-    legend.title = element_text(size = 14), # change legend title font size
+    legend.title = element_text(size = 12), # change legend title font size
     legend.text = element_text(size = 10), # change legend text font size
     legend.margin = margin(0, 0, 0, 0),
     legend.box.margin = margin(5, 5, 5, 5),
-    legend.title.align = 1
+    legend.title.align = 1,
+    legend.key.width = unit(2, "cm"),
   ) +
   scale_fill_gradientn(
-    colors = met.brewer("Morgenstern"),
+    colors = rev(MoMAColors::moma.colors("OKeeffe")),
     name = "Proportion of species  \nwith no known viruses  ",
     breaks = c(0, 0.25, 0.50, 0.75, 1),
     labels = c("0.0", "0.25", "0.50", "0.75", "1.00"),
-    limits = c(0, 1)
+    limits = c(0, 1),
+    na.value = "grey80"
   )
 ggplot2::ggsave(here::here("./figs/box-3/just-map.png"), g22)
 ## Assembly
