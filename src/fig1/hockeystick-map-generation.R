@@ -116,6 +116,7 @@ eidr$`Pathogen Type`[!(eidr$`Pathogen Type`
     %in% c("Bacteria", "Virus"))] <- "Other"
 
 ## plot ========================================================================
+map_title <- expression("Hotspots and hosts of emerging infectious diseases")
 richness_eidr_map <- ggplot() +
     tidyterra::stat_spatraster(data = terra::rast(zraster), alpha = 0.7) +
     # these scale_continuous with the expands fill out the box better
@@ -137,7 +138,8 @@ richness_eidr_map <- ggplot() +
         legend.key = element_rect(fill = NA),
         legend.title.align = 0.5,
         legend.box.just = "bottom",
-        legend.text = element_text(size = rel(1))
+        legend.text = element_text(size = rel(1)),
+        plot.title = element_text(size = rel(1.5), face = NULL)
     ) +
     # guides(
     #     fill = guide_colorbar(order = 1)
@@ -162,7 +164,7 @@ richness_eidr_map <- ggplot() +
     xlab(NULL) +
     ylab(NULL) +
     guides(shape = guide_legend(override.aes = list(size = 4))) +
-    ggtitle("Hotspots & hosts of emerging infectious diseases")
+    ggtitle(map_title)
 
 ggsave(
     here::here("./figs/fig-1/map.png"),
@@ -200,6 +202,7 @@ extinction <- extinction %>%
     )
 
 ### plotting ===================================================================
+extinctions_title <- expression("Biodiversity loss")
 extinctions_plot <- ggplot() +
     geom_line(
         data = extinction,
@@ -242,9 +245,10 @@ extinctions_plot <- ggplot() +
     theme(
         legend.position = "inside",
         legend.position.inside = c(0.3, 0.95),
-        legend.justification = "top"
+        legend.justification = "top",
+        plot.title = element_text(size = rel(1.5))
     ) +
-    ggtitle("Biodiversity loss")
+    ggtitle(extinctions_title)
 ggsave(
     here::here("./figs/fig-1/extinctions.png"),
     extinctions_plot,
@@ -291,6 +295,7 @@ mod_pred <- tidybayes::add_epred_draws(
 )
 
 ### plotting ===================================================================
+spillover_title <- expression("Disease emergence")
 spillover_plot <- ggplot() +
     ggdist::stat_lineribbon(
         data = mod_pred,
@@ -317,10 +322,11 @@ spillover_plot <- ggplot() +
     theme(
         legend.position = "inside",
         legend.position.inside = c(0.3, 0.95),
-        legend.justification = "top"
+        legend.justification = "top",
+        plot.title = element_text(size = rel(1.5))
         # legend.title = element_text(hjust = 0.5)
     ) +
-    ggtitle("Disease emergence")
+    ggtitle(spillover_title)
 ggsave(
     here::here("./figs/fig-1/spillover.png"),
     spillover_plot,
@@ -405,6 +411,7 @@ re_baselined_temp <- dplyr::left_join(
 )
 
 ### plotting ===================================================================
+temperature_title <- expression("Climate change")
 temperature_plot <- ggplot() +
     geom_hline(
         aes(yintercept = 0.0),
@@ -441,7 +448,8 @@ temperature_plot <- ggplot() +
     theme(
         legend.position = "inside",
         legend.position.inside = c(0.4, 0.95),
-        legend.justification = "top"
+        legend.justification = "top",
+        plot.title = element_text(size = rel(1.5))
     ) +
     scale_x_continuous(
         breaks = seq(from = 1600, to = 2020, by = 100)
@@ -450,7 +458,7 @@ temperature_plot <- ggplot() +
         breaks = seq(from = -0.5, to = 1.5, by = 0.5),
         limits = c(-0.7, 1.6)
     ) +
-    ggtitle("Climate change")
+    ggtitle(temperature_title)
 ggsave(
     here::here("./figs/fig-1/temperature.png"),
     temperature_plot,
@@ -467,18 +475,32 @@ ggsave(
     dpi = 300
 )
 
+all_panels <- ggpubr::ggarrange(
+    (spillover_plot +
+        extinctions_plot +
+        temperature_plot) /
+        (richness_eidr_map),
+    labels = c("A", "B", "C", "D"),
+    nrow = 2,
+    font.label = list(size = 28),
+    heights = c(0.6, -1),
+    widths = c(0.33, 0.33, 0.33, 1)
+) +
+    ggpubr::bgcolor("white")
+
 all_panels <-
     (spillover_plot +
         extinctions_plot +
         temperature_plot) /
-    (richness_eidr_map) +
-    patchwork::plot_layout(
-        heights = c(0.6, -1),
-        widths = c(0.33, 0.33, 0.33, 1)
-    ) +
-    plot_annotation(
-        tag_levels = "A"
-    )
+        (richness_eidr_map) +
+        patchwork::plot_layout(
+            heights = c(0.6, -1),
+            widths = c(0.33, 0.33, 0.33, 1)
+        ) +
+        plot_annotation(
+            tag_levels = "A"
+        ) &
+        theme(plot.tag = element_text(face = "bold", size = 30))
 
 ggsave(
     here::here("./figs/fig-1/figure-1.png"),
