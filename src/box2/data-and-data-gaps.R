@@ -35,27 +35,27 @@ tryCatch(
 
 # IUCN data ====================================================================
 
-iucn %>%
-  mutate(binomial = str_to_lower(binomial)) %>%
-  mutate(anyViruses = as.numeric(binomial %in% vir$Host)) -> iucn
+iucn <- iucn %>%
+  dplyr::mutate(binomial = stringr::str_to_lower(binomial)) %>%
+  dplyr::mutate(anyViruses = as.numeric(binomial %in% vir$Host))
 
 # Bar plot =====================================================================
 
-iucn %>%
+orderCounts <- iucn %>%
   as.data.frame() %>%
-  select(order_, binomial, anyViruses) %>%
-  distinct() %>%
-  group_by(order_, anyViruses) %>%
-  count() %>%
-  ungroup() %>%
-  mutate(order_ = str_to_sentence(order_)) -> orderCounts
+  dplyr::select(order_, binomial, anyViruses) %>%
+  dplyr::distinct() %>%
+  dplyr::group_by(order_, anyViruses) %>%
+  dplyr::count() %>%
+  dplyr::ungroup() %>%
+  dplyr::mutate(order_ = str_to_sentence(order_))
 
-orderCounts %>%
+top10orders <- orderCounts %>%
   group_by(order_) %>%
   summarize(n = sum(n)) %>%
   top_n(10) %>%
   arrange(-n) %>%
-  pull(order_) -> top10orders
+  pull(order_)
 
 # orderCounts %>%
 #   filter(order_ %in% top10orders) %>%
@@ -74,7 +74,7 @@ orderCounts %>%
 #   scale_fill_manual(values = c('lightgrey', 'darkblue'), labels = c("No viruses known", "Viruses recorded")) -> g1
 
 ## DB VERSION
-orderCounts %>%
+g1 <- orderCounts %>%
   filter(order_ %in% top10orders) %>%
   mutate(order_ = factor(order_, levels = top10orders)) %>%
   rename(count = n) %>%
@@ -99,12 +99,12 @@ orderCounts %>%
   scale_fill_manual(
     values = c("#d3d3d3b4", met.brewer("Signac")[8]),
     labels = c("No viruses known", "Viruses recorded")
-  ) -> g1
+  )
 
 ## Map
 
-iucn %>% filter(anyViruses == 0) -> iucnno
-iucn %>% filter(anyViruses == 1) -> iucnyes
+iucnno <- iucn %>% filter(anyViruses == 0)
+iucnyes <- iucn %>% filter(anyViruses == 1)
 
 mraster <- raster(iucn, res = 1 / 6)
 
@@ -112,7 +112,7 @@ noraster <- fasterize(iucnno, mraster, fun = "sum")
 yesraster <- fasterize(iucnyes, mraster, fun = "sum")
 
 diff <- (noraster - yesraster)
-plot(diff)
+# plot(diff)
 
 propno <- (noraster) / (noraster + yesraster)
 plot(propno)
@@ -124,7 +124,7 @@ scaleddiffdf <- raster::as.data.frame(propno, xy = TRUE)
 #   theme_void() +
 
 ## DB VERSION
-scaleddiffdf %>%
+g2 <- scaleddiffdf %>%
   ggplot(aes(x = x, y = y, fill = layer)) +
   geom_raster() +
   coord_sf() +
@@ -133,11 +133,13 @@ scaleddiffdf %>%
   scale_fill_gradientn(
     colors = met.brewer("Morgenstern"),
     name = "Proportion with\nno known viruses"
-  ) -> g2
+  )
 
 g22 <- ggplot() +
   tidyterra::stat_spatraster(data = terra::rast(propno)) +
   theme_base() +
+  scale_x_continuous(expand = c(0.02, 0.02)) +
+  scale_y_continuous(expand = c(0.03, 0.03)) +
   theme(
     legend.position = "top",
     legend.key.size = unit(2, "cm"), # change legend key size
@@ -168,5 +170,5 @@ ggplot2::ggsave(here::here("./figs/box-3/just-map.png"), g22)
 p <- g1 + g22 + plot_layout(widths = c(-1, 2))
 p
 ggplot2::ggsave(here::here("./figs/box-3/side-by-side.png"), p,
-  width = 12, height = 10
+  width = 12, height = 10, dpi = 300
 )
