@@ -2,9 +2,11 @@
 
 This code is used to generate the figures for the review on biodiversity, climate & planetary change, and infectious disease, citation to come. 
 
+**Note for reviewers:** Please note that the revision will contain an updated version of figures with analyses rerun following taxonomic harmonization between the CLOVER/VIRION databases and the IUCN Red List.
+
 ## For Users
 
-The code herein uses IUCN data, which takes the form of a large shapefile. Due to its size it can't be stored on GitHub, so it's currently stored on Google Drive. There's a file `src/iucn-download.R` that you should run to download that data. 
+The code herein uses IUCN data, which takes the form of a large shapefile. Due to its size it can't be stored on GitHub, so it's currently stored on Google Drive. There's a file `src/iucn-download.R` that you should run to download that data.
 
 All other data are provided, and the sources are noted in the subfolder `README.md` files.
 
