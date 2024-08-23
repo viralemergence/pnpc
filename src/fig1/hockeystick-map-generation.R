@@ -41,7 +41,7 @@ tryCatch(
             "attempting download..."
         )
         tryCatch({
-            source(here::here("./__main.R"))
+            source(here::here("./src/iucn-download.R"))
         })
         warning <- function(w) {
             print() # dummy warning function to suppress the output of warnings
