@@ -60,8 +60,12 @@ tryCatch(
 n_distinct(iucn$binomial) #5844
 n_distinct(vir$Host) #4103
 
-#make some new dataframes that are more manageable
-iucn<- iucn %>% select(binomial) %>% arrange(binomial) %>%
+#make some new dataframes that are more manageable (original IUCN is slow)
+iucn<- iucn$binomial 
+iucn <- iucn %>% as.data.frame() 
+iucn$binomial=iucn$.
+iucn$.=NULL
+iucn<- iucn %>% arrange(binomial) %>%
   mutate(binomial = tolower(binomial))
 vir<- vir %>% select(Host) %>% arrange(Host) %>%
   mutate(Host = tolower(Host)) %>% unique()
@@ -75,11 +79,16 @@ miss$.=NULL
 #revalue=c("old tip"= "new tip")
 vir$iucn=vir$Host
 vir$iucn= plyr::revalue(vir$iucn,
-                        c("abramis brama"="",
-                          "abrothrix hirta"="abrothrix longipilis"))
+                        c("abramis brama"="", #miss
+                          "abrothrix hirta"="abrothrix longipilis",
+                          "abudefduf bengalensis"="", #miss
+                          "acanthemblemaria crockeri"="", #miss
+                          "acanthemblemaria sp. cur14058.g"="", #miss
+                          "acanthis cabaret"="", #miss
+                          "acanthis flammea"="", #miss
+                        
+                        ))
 
-#progreess
-#abramis brama -- not found, try again tmrw
 
 
 #3
