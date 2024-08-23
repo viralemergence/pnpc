@@ -26,7 +26,7 @@ tryCatch(
   error = function(err) {
     print("Could not read data from current directory, attempting download...")
     tryCatch({
-      source(here::here("./__main.R"))
+      source(here::here("./src/iucn-download.R"))
     })
     warning <- function(w) {
       print() # dummy warning function to suppress the output of warnings
