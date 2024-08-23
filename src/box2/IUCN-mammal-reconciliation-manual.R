@@ -55,9 +55,13 @@ tryCatch(
 )
 
 #2
+#filter to mammals
+iucn<-iucn %>% filter(class=="MAMMALIA")
+vir<- vir %>% filter(HostClass=="mammalia")
+
 #unique species in iucn dataset & VIRION
 n_distinct(iucn$binomial) #5844
-n_distinct(vir$Host) #4103
+n_distinct(vir$Host) #1795
 
 #make some new dataframes that are more manageable (original IUCN is slow)
 iucn<- iucn$binomial 
@@ -78,14 +82,7 @@ miss$.=NULL
 #revalue=c("old tip"= "new tip")
 vir$iucn=vir$Host
 vir$iucn= plyr::revalue(vir$iucn,
-                        c("abramis brama"="", #miss
-                          "abrothrix hirta"="abrothrix longipilis",
-                          "abudefduf bengalensis"="", #miss
-                          "acanthemblemaria crockeri"="", #miss
-                          "acanthemblemaria sp. cur14058.g"="", #miss
-                          "acanthis cabaret"="", #miss
-                          "acanthis flammea"="", #miss
-                        
+                        c("abrothrix hirta"="abrothrix longipilis" 
                         ))
 
 
