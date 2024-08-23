@@ -6,6 +6,8 @@ This code is used to generate the figures for the review on biodiversity, climat
 
 ## For Users
 
+We do not provide a `__main.R` file for you to run all of the analysis at once, but rather, each piece (denoted by the subfolders of the `/src` folder) are self-contained so you are able to reproduce each figure individually without having to run the (potentially) longer subsets of code that other figures might require. To reproduce a single figure please use the code in the associated `/src` sub-folder.
+
 The code herein uses IUCN data, which takes the form of a large shapefile. Due to its size it can't be stored on GitHub, so it's currently stored on Google Drive. There's a file `src/iucn-download.R` that you should run to download that data.
 
 All other data are provided, and the sources are noted in the subfolder `README.md` files.
