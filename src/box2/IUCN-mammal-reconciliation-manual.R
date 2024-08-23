@@ -56,35 +56,31 @@ tryCatch(
 )
 
 #2
-#mammal reconciliation extravaganza
-
 #unique species in iucn dataset & VIRION
 n_distinct(iucn$binomial) #5844
 n_distinct(vir$Host) #4103
 
 #make some new dataframes that are more manageable
-iucn1<-unique(iucn$binomial) %>% as.data.frame()
-vir1<-unique(vir$Host) %>% as.data.frame()
-
-iucn1$binomial=iucn1$.
-vir1$host=vir1$.
-iucn1$.=NULL
-vir1$.=NULL
-
-iucn1$binomial<- tolower(iucn1$binomial)
-
-#alphabetize
-iucn1 <- iucn1 %>% arrange(binomial)
-vir1 <- iucn1 %>% arrange(host)
+iucn<- iucn %>% select(binomial) %>% arrange(binomial) %>%
+  mutate(binomial = tolower(binomial))
+vir<- vir %>% select(Host) %>% arrange(Host) %>%
+  mutate(Host = tolower(Host)) %>% unique()
 
 #find differences
-miss=setdiff(vir1$host,iucn$binomial) %>% as.data.frame #4,103 
-miss <- iucn1 %>% arrange(.)
+miss=setdiff(vir$Host,iucn$binomial) %>% as.data.frame %>% unique() #2,534
 miss$species=miss$.
 miss$.=NULL
 
+#make VIRION match IUCN
 #revalue=c("old tip"= "new tip")
-vir1$host= plyr::revalue(vir1$host,
+vir$iucn=vir$Host
+vir$iucn= plyr::revalue(vir$iucn,
+                        c("abramis brama"="",
+                          "abrothrix hirta"="abrothrix longipilis"))
+
+#progreess
+#abramis brama -- not found, try again tmrw
+
 
 #3
 #save csv
