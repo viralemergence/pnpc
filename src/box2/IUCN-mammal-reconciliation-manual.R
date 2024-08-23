@@ -21,10 +21,9 @@ library(MetBrewer)
 #1 load in IUCN data and VIRION to make sure I use the correct IUCN
 #2 match VIRION to IUCN 
 #3 save a csv of original VIRION names with a column for IUCN  match (empty rn)
-
-#4 match Virion/IUCN to Upham?
-#5 match IUCN to Upham?
-#6 match Clover to Upham?
+#4 there is a script that reconciles VIRION to Upham in VERNA github--> find this
+#5 match IUCN to Upham
+#6 match Clover to Upham
 
 #1
 #load in IUCN data and VIRION
