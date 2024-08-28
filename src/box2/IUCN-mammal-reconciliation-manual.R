@@ -106,7 +106,17 @@ vir$iucn= plyr::revalue(vir$iucn,
                          "bos indicus x bos taurus"="",#ask Cole
                          "bos primigenius"="", #ask Cole
                          "bos taurus"="", #ask Cole
-                         "bos taurus x bison bison"=""
+                         "bos taurus x bison bison"="",
+                         "bubalus bubalis"="bubalus arnee",
+                         "bubalus carabanensis",="bubalus arnee",
+                         "bubalus sp."="", #ask Cole
+                         "cacajao rubicundus"="cacajao calvus",
+                         "callicebus sp."="", #ask Cole
+                         "callithrix sp."="",
+                         "calomys sp."="",
+                         "camelus bactrianus"="camelus ferus"
+                         
+                         
                          
                   
                         ))
