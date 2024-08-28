@@ -74,7 +74,7 @@ vir<- vir %>% select(Host) %>% arrange(Host) %>%
   mutate(Host = tolower(Host)) %>% unique()
 
 #find differences
-miss=setdiff(vir$Host,iucn$binomial) %>% as.data.frame %>% unique() #2,534
+miss=setdiff(vir$Host,iucn$binomial) %>% as.data.frame %>% unique() #233
 miss$species=miss$.
 miss$.=NULL
 
@@ -82,14 +82,41 @@ miss$.=NULL
 #revalue=c("old tip"= "new tip")
 vir$iucn=vir$Host
 vir$iucn= plyr::revalue(vir$iucn,
-                        c("abrothrix hirta"="abrothrix longipilis" 
+                        c("abrothrix hirta"="abrothrix longipilis",
+                          "aeorestes cinereus"="lasiurus cinereus",
+                          "aeorestes egregius"="lasiurus egregius",
+                          "afronycteris nana"="neoromicia nana",
+                          "alces americanus"="alces alces",
+                          "alexandromys oeconomus"="microtus oeconomus",
+                          "antrozous dubiaquercus"="bauerus dubiaquercus",
+                          "aotus azarai"= "aotus azarae",
+                         "apodemus chejuensis"="apodemus agrarius",
+                         "apodemus ilex"="apodemus draco",
+                         "artibeus cinereus"="dermanura cinerea",
+                         "artibeus glaucus"="dermanura glauca",
+                         "artibeus phaeotis"="dermanura phaeotis",
+                         "artibeus toltecus"="dermanura tolteca",
+                         "arvicanthis sp."= "", #ask Cole
+                         "ateles sp."= "", #ask Cole
+                         "bandicota sp."="", #ask Cole
+                         "bolomys amoenus"="necromys amoenus",
+                         "bos frontalis"="bos gaurus",
+                         "bos grunniens"="bos mutus",
+                         "bos indicus"= "", #ask Cole
+                         "bos indicus x bos taurus"="",#ask Cole
+                         "bos primigenius"="", #ask Cole
+                         "bos taurus"="", #ask Cole
+                         "bos taurus x bison bison"=""
+                         
+                  
                         ))
 
+#check
+miss=setdiff(vir$iucn,iucn$binomial) #209
 
 
 #3
 #save csv
-
 
 #4 
 #match IUCN/VIRION to Upham
