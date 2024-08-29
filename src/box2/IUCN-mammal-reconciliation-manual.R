@@ -1,6 +1,6 @@
 #' DESCRIPTION: IUCN mammal reconciliation manual
 #' AUTHOR: Cole Brookson, & Caroline Cummings
-#' Last Update: 23 June 2024
+#' Last Update: 28 Ausgust 2024
 
 # set up =======================================================================
 
@@ -80,6 +80,11 @@ miss$.=NULL
 
 #make VIRION match IUCN
 #revalue=c("old tip"= "new tip")
+
+#https://www.iucnredlist.org/
+#https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi
+#https://www.gbif.org/species/search
+
 vir$iucn=vir$Host
 vir$iucn= plyr::revalue(vir$iucn,
                         c("abrothrix hirta"="abrothrix longipilis",
@@ -112,23 +117,94 @@ vir$iucn= plyr::revalue(vir$iucn,
                          "bubalus sp."="", #recheck synonyms
                          "cacajao rubicundus"="cacajao calvus",
                          "callicebus sp."="", #recheck synonyms
-                         "callithrix sp."="",
-                         "calomys sp."="",
+                         "callithrix sp."="", #recheck synonyms
+                         "calomys sp."="", #recheck synonyms
                          "camelus bactrianus"="camelus ferus",
-                         "camelus dromedarius"="camelus ferus", #closest synonym, sanity check w another person
-                         "canis sp."="",
+                         "camelus dromedarius"="camelus ferus", 
+                         "canis sp."="", #recheck synonyms
                          "capra hircus"="capra aegagrus",
-                         "capra sp."="capra aegagrus", #closest synonym, check
+                         "capra sp."="capra aegagrus", 
                          "capricornis milneedwardsii"="capricornis sumatraensis",
-                         "cavia cutleri"=
-                         
-                         
-                         
-                  
+                         "cavia cutleri"="", #recheck synonyms
+                         "cavia porcellus"="cavia aperea",
+                         "cebus sp."="", #recheck synonyms
+                         "cephalophorus rufilatus"="cephalophus rufilatus",
+                         "cercopithecus albogularis"="cercopithecus mitis",
+                         "cercopithecus doggetti"="cercopithecus mitis",
+                         "cercopithecus kandti"="cercopithecus mitis",
+                         "cervidae sp."= "", #recheck synonyms
+                         "chaerephon leucogaster"="mops leucogaster",
+                         "chaerephon pusillus"="mops pusillus",
+                         "chiropotes sp."= "", #recheck synonyms
+                         "clethrionomys gapperi"= "myodes gapperi",
+                         "coendou rothschildi"="coendou quichua",
+                         "cricetulus griseus"="cricetulus barabensis",
+                         "crocidura dracula"= "crocidura fuliginosa",
+                         "cynopterus sp."= "", #recheck synonyms
+                         "dasypterus ega"="lasiurus ega",
+                         "dasypterus xanthinus"="lasiurus xanthinus",
+                         "delphinus capensis"="delphinus delphis",
+                         "dipodillus dasyurus"="gerbillus dasyurus",
+                         "dobsonia andersoni"="dobsonia anderseni",
+                         "dorcopsis veterum"="dorcopsis muelleri",
+                         "doryrhina cyclops"= "hipposideros cyclops",
+                         "echinosciurus variegatoides"="sciurus variegatoides",
+                         "eospalax rufescens"="eospalax smithii",
+                         "eothenomys eleusis"="", #recheck synonyms
+                         "eothenomys eva"="caryomys eva",
+                         "eothenomys inez"="caryomys inez",
+                         "epomophorus pusillus"="micropteropus pusillus",
+                         "epomops sp."="", #recheck synonyms
+                         "eptesicus regulus"="vespadelus regulus",
+                         "eptesicus sp."="",#recheck synonyms
+                         "eptesicus vulturnus"="vespadelus vulturnus",
+                         "equus asinus"="equus africanus",
+                         "equus asinus x caballus"="equus africanus",
+                         "equus burchellii"="equus quagga",
+                         "equus caballus"="equus ferus",
+                         "equus caballus x equus asinus"="equus ferus",
+                         "equus przewalskii"="equus ferus",
+                         "equus sp."="",#recheck synonyms
+                         "erinaceus sp."= "", #recheck synonyms
+                         "felis catus"="felis silvestris",
+                         "felis sp."="", #recheck synonyms
+                         "galerella pulverulenta"="herpestes pulverulentus",
+                         "galerella sanguinea"="herpestes sanguineus",
+                         "gerbilliscus sp."= "", #recheck synonyms
+                         "giraffa giraffa"="giraffa camelopardalis",
+                         "giraffa reticulata"="giraffa camelopardalis",
+                         "grammomys sp."= "", #recheck synonyms
+                         "grammomys surdaster"="grammomys dolichurus",
+                         "hesperosciurus griseus"="sciurus griseus",
+                         "hexaprotodon liberiensis"="choeropsis liberiensis",
+                         "hipposideros cf. ruber"="hipposideros ruber",
+                         "hipposideros terasensis"="hipposideros armiger",
+                         "homo sapiens"= "", #what should i do for humans?
+                         "hsunycteris thomasi"="lonchophylla thomasi",
+                         "hylobates sp."="",  #recheck synonyms
+                         "hylomyscus simus"="hylomyscus alleni",
+                         "inia boliviensis"="inia geoffrensis",
+                         "laephotis capensis"="neoromicia capensis",
+                         "lagothrix cana"="lagothrix lagothricha",
+                         "lagothrix lagotricha"="lagothrix lagothricha",
+                         "lagothrix lugens"="lagothrix lagothricha",
+                         "lagothrix poeppigii"="lagothrix lagothricha",
+                         "lama glama"="lama guanicoe",
+                         "lasiopodomys gregalis"="microtus gregalis",
+                         "lasiurus sp. (in: bats)"= "", #recheck synonyms
+                         "liomys adspersus"="heteromys adspersus",
+                         "liomys pictus"="heteromys pictus",
+                         "liomys salvini"="heteromys salvini",
+                         "lophuromys aquilus"="lophuromys flavopunctatus",
+                         "lophuromys dudui"="lophuromys flavopunctatus",
+                         "lophuromys laticeps"="lophuromys flavopunctatus",
+                         "macaca balantak"="macaca tonkeana",
+                         "macaca balantak x tonkeana"="macaca tonkeana",
+                         "macaca leucogenys"="macaca sinica"
                         ))
 
 #check
-miss=setdiff(vir$iucn,iucn$binomial) #209
+miss=setdiff(vir$iucn,iucn$binomial) #120
 
 
 #3
