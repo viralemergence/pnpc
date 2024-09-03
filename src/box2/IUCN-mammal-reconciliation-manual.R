@@ -252,11 +252,19 @@ vir$iucn= plyr::revalue(vir$iucn,
                         "oligoryzomys mattogrossae"="oligoryzomys microtis",
                         "oligoryzomys sp."="", #drop
                         "oligoryzomys sp. rt-2012"="", #drop
-                        "oligoryzomys utiaritensis"="oligoryzomys eliurus"
+                        "oligoryzomys utiaritensis"="oligoryzomys eliurus",
+                        "orientallactaga sibirica"="allactaga sibirica",
+                        "oryzomys sp."="", #drop
+                        "oryzomys texensis"="oryzomys palustris",
+                        "osphranter robustus"="macropus robustus",
+                        "osphranter rufus"="macropus rufus",
+                        "ovis aries"="", #drop domesticated animals
+                        "ovis orientalis"="ovis gmelini",
+                        "oxymycterus judex"="oxymycterus quaestor"
                         ))
 
 #check
-miss=setdiff(vir$iucn,iucn$binomial) #68!
+miss=setdiff(vir$iucn,iucn$binomial) #60!
 
 
 #3
