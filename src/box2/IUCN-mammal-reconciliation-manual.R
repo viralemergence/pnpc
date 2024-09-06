@@ -312,7 +312,13 @@ vir$iucn= plyr::revalue(vir$iucn,
                             "tupaia chinensis"="tupaia belangeri",
                             "undetermined sciuridae 'chipmunks'"="",
                             "uropsilus sp."="",
-                            "ursus sp."=
+                            "ursus sp."="",
+                            "urva auropunctata"="herpestes auropunctatus",
+                            "urva edwardsii"="Herpestes edwardsi",
+                            "urva javanica"="Herpestes javanicus",
+                            "vicugna pacos"="lama guanicoe",
+                            "xanthonycticebus pygmaeus"="nycticebus pygmaeus",
+                            "zygodontomys cherriei"="zygodontomys brevicauda"
                        ))
 
 #check
