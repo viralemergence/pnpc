@@ -284,7 +284,7 @@ vir$iucn= plyr::revalue(vir$iucn,
                         "rhinolophus cornutus"="rhinolophus pusillus",
                         "rhinolophus hildebrandti"="rhinolophus hildebrandtii",
                         "rhinolophus lobatus"="rhinolophus landeri",
-                       # "rhinolophus monoceros"= "" ##recheck,
+                       #"rhinolophus monoceros"= "" ##recheck,
                       # "rhinolophus rhodesiae"= "" ##recheck
                         "rhinolophus sp. cn 2016"="",
                         "rodentia sp."="",
@@ -293,7 +293,27 @@ vir$iucn= plyr::revalue(vir$iucn,
                         "saimiri sp."="",
                         "sapajus sp."="",
                         "scarturus elater"="allactaga elater",
-                        "sorex monticolus"="sorex monticola"  ))
+                        "sorex monticolus"="sorex monticola",
+                        "steatomys sp."="",
+                         "sus sp."="",
+                         "sylvilagus sp."="",
+                         "syntheosciurus granatensis"="sciurus granatensis",
+                         "taeromys dominator"="paruromys dominator",
+                         # "talpa aquitania"= #recheck,
+                          "tamias amoenus"="neotamias amoenus",
+                          "tamias minimus"="neotamias minimus",
+                          "tamias quadrivittatus"="neotamias quadrivittatus",
+                          "tamias sibiricus"="eutamias sibiricus",
+                          "tamias umbrinus"="neotamias umbrinus",
+                           "taphozous sp."="",
+                           "terricola subterraneus"="microtus subterraneus",
+                           "thryonomys sp."="",
+                           #"triaenops menamena"=""
+                            "tupaia chinensis"="tupaia belangeri",
+                            "undetermined sciuridae 'chipmunks'"="",
+                            "uropsilus sp."="",
+                            "ursus sp."=
+                       ))
 
 #check
 miss=setdiff(vir$iucn,iucn$binomial) #30!
