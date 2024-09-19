@@ -322,8 +322,7 @@ vir$iucn= plyr::revalue(vir$iucn,
                        ))
 
 #check
-miss=setdiff(vir$iucn,iucn$binomial) #30!
-
+miss=setdiff(vir$iucn,iucn$binomial) #2!
 
 #3
 #save csv
