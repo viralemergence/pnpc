@@ -1,6 +1,6 @@
 #' DESCRIPTION: IUCN mammal reconciliation manual
 #' AUTHOR: Cole Brookson, & Caroline Cummings
-#' Last Update: 3 September 2024
+#' Last Update: 19 September 2024
 
 # set up =======================================================================
 
@@ -326,6 +326,8 @@ miss=setdiff(vir$iucn,iucn$binomial) #2!
 
 #3
 #save csv
+setwd("~/Desktop/GitHub/pnpc/src/box2")
+write_csv(vir,"IUCN reconciliation manual.csv")
 
 #4 
 #match IUCN/VIRION to Upham
@@ -334,8 +336,7 @@ miss=setdiff(vir$iucn,iucn$binomial) #2!
 #5
 #match IUCN and Upham
 #load Upham phylogeny
-#Caroline, get the One drive to work!!!!!
-#setwd("~/OneDrive - University of Oklahoma/Becker Lab/Datasets/Upham phylo") #this doesn't work for me still... on my list to try again
+#setwd("~/OneDrive - University of Oklahoma/Becker Lab/Datasets/Upham phylo") 
 setwd("~/Desktop/GitHub/WBC-BRT/phylo")
 tree=read.nexus('MamPhy_fullPosterior_BDvr_Completed_5911sp_topoCons_NDexp_MCC_v2_target.tre')
 
