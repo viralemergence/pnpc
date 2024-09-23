@@ -1,6 +1,6 @@
 #' DESCRIPTION: IUCN mammal reconciliation manual
 #' AUTHOR: Cole Brookson, & Caroline Cummings
-#' Last Update: 19 September 2024
+#' Last Update: 23 September 2024
 
 # set up =======================================================================
 
@@ -327,7 +327,7 @@ miss=setdiff(vir$iucn,iucn$binomial) #2!
 #3
 #save csv
 setwd("~/Desktop/GitHub/pnpc/src/box2")
-write_csv(vir,"IUCN reconciliation manual.csv")
+#write_csv(vir,"IUCN reconciliation manual.csv")
 
 #4 
 #match IUCN/VIRION to Upham
