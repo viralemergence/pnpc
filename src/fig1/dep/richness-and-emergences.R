@@ -43,8 +43,82 @@ reservoirs <- clo %>%
   dplyr::pull(Host) %>%
   unique()
 
+#match reservoirs to iucn
+iucn$binomial=stringr::str_to_lower(iucn$binomial)
+miss <- sort(setdiff(reservoirs,iucn$binomial))
+reservoirs <- plyr::revalue(reservoirs,
+                            c("aeorestes cinereus"="lasiurus cinereus",
+                              "aeorestes egregius"="lasiurus egregius",
+                              "alces americanus"="alces alces",
+                              "aotus azarai"="aotus azarae",
+                              "artibeus cinereus"="dermanura cinerea",
+                              "artibeus phaeotis"="dermanura phaeotis",
+                              "artibeus toltecus"="dermanura tolteca",
+                              "cercopithecus albogularis"="cercopithecus mitis",
+                              "coendou rothschildi"="coendou quichua",
+                              "dasypterus ega"="lasiurus ega",
+                              "dasypterus intermedius"="lasiurus intermedius",
+                              "dasypterus xanthinus"="lasiurus xanthinus",
+                              "delphinus capensis"="delphinus delphis",
+                              "dipodillus campestris"="gerbillus campestris",
+                              "dipodillus dasyurus"="gerbillus dasyurus",
+                              "dobsonia andersoni"="dobsonia anderseni",
+                              "eothenomys eleusis"="eothenomys melanogaster",
+                              "equus burchellii"="equus quagga",
+                              "equus przewalskii"="equus ferus",
+                              "galerella pulverulenta"="herpestes pulverulentus",
+                              "galerella sanguinea"="herpestes sanguineus",
+                              "hexaprotodon liberiensis"="choeropsis liberiensis",
+                              "lagothrix lagotricha"="lagothrix lagothricha",
+                              "lasiopodomys gregalis"="microtus gregalis",
+                              "liomys adspersus"="heteromys adspersus",
+                              "liomys salvini"="heteromys salvini",
+                              "macaca balantak"="macaca tonkeana",
+                              "mazama gouazoupira"="mazama gouazoubira",
+                              "megaderma lyra"="lyroderma lyra",
+                              "miniopterus fuliginosus"="miniopterus schreibersii",
+                              "mustela eversmannii"="mustela eversmanii",
+                              "myotis ricketti"= "myotis pilosus",
+                              "neodon fuscus"="lasiopodomys fuscus",
+                              "neotragus moschatus"="nesotragus moschatus",
+                              "notamacropus agilis"="macropus agilis",
+                              "notamacropus dorsalis"="macropus dorsalis",
+                              "notamacropus parryi"="macropus parryi",
+                              "notamacropus rufogriseus"="macropus rufogriseus",
+                              "ochotona pallasi"="ochotona pallasii",
+                              "orientallactaga sibirica"="allactaga sibirica",
+                              "osphranter robustus"="macropus robustus",
+                              "osphranter rufus"="macropus rufus",
+                              "ovis orientalis"="ovis gmelini",
+                              "phoca groenlandica"="pagophilus groenlandicus",
+                              "physeter catodon"="physeter macrocephalus",
+                              "prionailurus iriomotensis"="prionailurus bengalensis",
+                              "profelis aurata"="caracal aurata",
+                              "puma yagouaroundi"="herpailurus yagouaroundi",
+                              "rattus flavipectus"="rattus tanezumi",
+                              "rhinolophus cornutus"="rhinolophus pusillus",
+                              "tamias amoenus"="neotamias amoenus",
+                              "tamias dorsalis"="neotamias dorsalis",
+                              "tamias merriami"="neotamias merriami",
+                              "tamias minimus"="neotamias minimus",
+                              "tamias ochrogenys"="neotamias ochrogenys",
+                              "tamias quadrivittatus"="neotamias quadrivittatus",
+                              "tamias sibiricus"="eutamias sibiricus",
+                              "tamias sonomae"="neotamias sonomae",
+                              "tamias speciosus"="neotamias speciosus",
+                              "tamias umbrinus"="neotamias umbrinus",
+                              "terricola subterraneus"="microtus subterraneus",
+                              "trachypithecus vetulus"="semnopithecus vetulus",
+                              "urva javanica"="herpestes javanicus"))
+
+#recheck missing
+miss <- sort(setdiff(reservoirs,iucn$binomial)) ## only domestics
+
+#unique
+reservoirs <- unique(reservoirs)
+
 ranges <- iucn %>%
-  dplyr::mutate(binomial = stringr::str_to_lower(binomial)) %>%
+  #dplyr::mutate(binomial = stringr::str_to_lower(binomial)) %>%
   dplyr::filter(binomial %in% reservoirs)
 
 # set up raster data
