@@ -1,5 +1,5 @@
 #' DESCRIPTION: figure for the third box
-#' AUTHOR: Daniel Becker & Cole Brookson
+#' AUTHOR: Daniel Becker, Cole Brookson, & Caroline Cummings
 #' DATE: 19 June 2024
 
 # set up =======================================================================
@@ -36,9 +36,215 @@ tryCatch(
 
 # IUCN data ====================================================================
 
+#match virion to iucn
+vir <- vir[!is.na(vir$Host),]
+vir <- vir[vir$HostClass=="mammalia",]
+vir <- vir[!is.na(vir$HostClass),]
+vir$iucn <- vir$Host 
+iucn$binomial <- stringr::str_to_lower(iucn$binomial)
+
+#trim sp.
+vir$trim <- ifelse(grepl("sp\\.",vir$iucn),1,0)
+vir <- vir[!vir$trim==1,]
+
+#trim other
+vir$trim <- ifelse(vir$iucn%in%c("marmosets",
+                                 "undetermined sciuridae 'chipmunks'"),1,0)
+vir <- vir[!vir$trim==1,]
+
+#trim domestics and humans in trim
+vir$trim=ifelse(vir$iucn%in%c("bos frontalis",
+                              "bos grunniens",
+                              "bos indicus",
+                              "bos indicus x bos taurus",
+                              "bos primigenius",
+                              "bos taurus",
+                              "bos taurus x bison bison",
+                              "bubalus bubalis",
+                              "bubalus carabanensis",
+                              "camelus bactrianus",
+                              "camelus dromedarius",
+                              "capra hircus",
+                              "cavia porcellus",
+                              "equus asinus",
+                              "equus asinus x caballus",
+                              "equus asinus x equus caballus",
+                              "equus caballus",
+                              "equus caballus x equus asinus",
+                              "felis catus",
+                              "homo sapiens",
+                              "lama glama",
+                              "ovis aries",
+                              "vicugna pacos"),1,0)
+vir <- vir[!vir$trim==1,]
+vir$trim <- NULL
+
+#manual match
+miss <- setdiff(vir$iucn,iucn$binomial)
+vir$iucn <- plyr::revalue(vir$iucn,
+                          c("abrothrix hirta"="abrothrix longipilis",
+                            "aeorestes cinereus"="lasiurus cinereus",
+                            "aeorestes egregius"="lasiurus egregius",
+                            "afronycteris nana"="neoromicia nana",
+                            "alces americanus"="alces alces",
+                            "alexandromys oeconomus"="microtus oeconomus",
+                            "antrozous dubiaquercus"="bauerus dubiaquercus",
+                            "aotus azarai"= "aotus azarae",
+                            "apodemus chejuensis"="apodemus agrarius",
+                            "apodemus ilex"="apodemus draco",
+                            "artibeus cinereus"="dermanura cinerea",
+                            "artibeus glaucus"="dermanura glauca",
+                            "artibeus phaeotis"="dermanura phaeotis",
+                            "artibeus toltecus"="dermanura tolteca",
+                            "bolomys amoenus"="necromys amoenus",
+                            "cacajao rubicundus"="cacajao calvus",
+                            "capricornis milneedwardsii"="capricornis sumatraensis",
+                            "cavia cutleri"="cavia tschudii", 
+                            "cephalophorus rufilatus"="cephalophus rufilatus",
+                            "cercopithecus albogularis"="cercopithecus mitis",
+                            "cercopithecus doggetti"="cercopithecus mitis",
+                            "cercopithecus kandti"="cercopithecus mitis",
+                            "chaerephon leucogaster"="mops leucogaster",
+                            "chaerephon pusillus"="mops pusillus",
+                            "clethrionomys gapperi"= "myodes gapperi",
+                            "coendou rothschildi"="coendou quichua",
+                            "cricetulus griseus"="cricetulus barabensis",
+                            "crocidura dracula"= "crocidura fuliginosa",
+                            "dasypterus ega"="lasiurus ega",
+                            "dasypterus intermedius"="lasiurus intermedius",
+                            "dasypterus xanthinus"="lasiurus xanthinus",
+                            "delphinus capensis"="delphinus delphis",
+                            "dipodillus dasyurus"="gerbillus dasyurus",
+                            "dobsonia andersoni"="dobsonia anderseni",
+                            "dorcopsis veterum"="dorcopsis muelleri",
+                            "doryrhina cyclops"= "hipposideros cyclops",
+                            "echinosciurus variegatoides"="sciurus variegatoides",
+                            "eospalax rufescens"="eospalax smithii",
+                            "eothenomys eleusis"="eothenomys melanogaster",
+                            "eothenomys eva"="caryomys eva",
+                            "eothenomys inez"="caryomys inez",
+                            "epomophorus pusillus"="micropteropus pusillus",
+                            "eptesicus regulus"="vespadelus regulus",
+                            "eptesicus vulturnus"="vespadelus vulturnus",
+                            "equus burchellii"="equus quagga",
+                            "equus przewalskii"="equus ferus",
+                            "galerella pulverulenta"="herpestes pulverulentus",
+                            "galerella sanguinea"="herpestes sanguineus",
+                            "giraffa giraffa"="giraffa camelopardalis",
+                            "giraffa reticulata"="giraffa camelopardalis",
+                            "grammomys surdaster"="grammomys dolichurus",
+                            "hesperosciurus griseus"="sciurus griseus",
+                            "hexaprotodon liberiensis"="choeropsis liberiensis",
+                            "hipposideros cf. ruber"="hipposideros ruber",
+                            "hipposideros terasensis"="hipposideros armiger",
+                            "hsunycteris thomasi"="lonchophylla thomasi",
+                            "hylomyscus simus"="hylomyscus alleni",
+                            "inia boliviensis"="inia geoffrensis",
+                            "laephotis capensis"="neoromicia capensis",
+                            "lagothrix cana"="lagothrix lagothricha",
+                            "lagothrix lagotricha"="lagothrix lagothricha",
+                            "lagothrix lugens"="lagothrix lagothricha",
+                            "lagothrix poeppigii"="lagothrix lagothricha",
+                            "lasiopodomys gregalis"="microtus gregalis",
+                            "liomys adspersus"="heteromys adspersus",
+                            "liomys pictus"="heteromys pictus",
+                            "liomys salvini"="heteromys salvini",
+                            "lophuromys aquilus"="lophuromys flavopunctatus",
+                            "lophuromys dudui"="lophuromys flavopunctatus",
+                            "lophuromys laticeps"="lophuromys flavopunctatus",
+                            "macaca balantak"="macaca tonkeana",
+                            "macaca balantak x tonkeana"="macaca tonkeana",
+                            "macaca leucogenys"="macaca sinica",
+                            "macaca speciosa"="macaca arctoides",
+                            "macronycteris vittata"="macronycteris vittatus",
+                            "mazama gouazoupira"="mazama gouazoubira",
+                            "megaderma lyra"="lyroderma lyra",
+                            "microtus obscurus"="microtus arvalis",
+                            "microtus rossiaemeridionalis"="microtus levis",
+                            "miniopterus fuliginosus"="miniopterus schreibersii",
+                            "miniopterus mossambicus"= "miniopterus minor",
+                            "miniopterus orianae"= "miniopterus schreibersii",
+                            "molossus ater"="molossus rufus",
+                            "mops pumilus"="chaerephon pumilus",
+                            "mustela eversmannii"="mustela eversmanii",
+                            "myotis cf. californicus/ciliolabrum bl-2021"= "myotis californicus", 
+                            "myotis crypticus"="myotis nattereri",
+                            "myotis flavus"="myotis formosus",
+                            "myotis myotis/blythii"="myotis myotis", 
+                            "myotis oxygnathus"="myotis blythii",
+                            "myotis ricketti"= "myotis pilosus",
+                            "myotomys unisulcatus"="otomys unisulcatus",
+                            "nannospalax galili"="nannospalax ehrenbergi",
+                            "neodon clarkei"="microtus clarkei",
+                            "neodon fuscus"="lasiopodomys fuscus",
+                            "neodon leucurus"="phaiomys leucurus",
+                            "neogale vison"="neovison vison",
+                            "neoromicia brunneus"="neoromicia brunnea",
+                            "neoromicia somalicus"="neoromicia malagasyensis",
+                            "nesogale dobsoni"="microgale dobsoni",
+                            "niumbaha superba"="glauconycteris superba",
+                            "niviventer huang"="niviventer fulvescens",
+                            "niviventer lotipes"="niviventer confucianus",
+                            "notamacropus agilis"="macropus agilis",
+                            "notamacropus dorsalis"="macropus dorsalis",
+                            "notamacropus eugenii"="macropus eugenii",
+                            "notamacropus parma"="macropus parma",
+                            "notamacropus parryi"="macropus parryi",
+                            "notamacropus rufogriseus"="macropus rufogriseus",
+                            "nyctalus velutinus"="nyctalus noctula",
+                            "oligoryzomys costaricensis"="oligoryzomys fulvescens",
+                            "oligoryzomys mattogrossae"="oligoryzomys microtis",
+                            "oligoryzomys utiaritensis"="oligoryzomys eliurus",
+                            "orientallactaga sibirica"="allactaga sibirica",
+                            "oryzomys texensis"="oryzomys palustris",
+                            "osphranter robustus"="macropus robustus",
+                            "osphranter rufus"="macropus rufus",
+                            "ovis orientalis"="ovis gmelini",
+                            "oxymycterus judex"="oxymycterus quaestor",
+                            "pantherina griselda"="blarinella griselda",
+                            "parahypsugo crassulus"="pipistrellus crassulus",
+                            "pekania pennanti"="martes pennanti",
+                            "phoca fasciata"="histriophoca fasciata",
+                            "phoca groenlandica"="pagophilus groenlandicus",
+                            "physeter catodon"="physeter macrocephalus",
+                            "plecotus gaisleri"="plecotus teneriffae",
+                            "prionailurus iriomotensis"="prionailurus bengalensis",
+                            "ptenochirus jagorii"="ptenochirus jagori",
+                            "pteronotus alitonus"= "pteronotus rubiginosus",
+                            "puma yagouaroundi"="herpailurus yagouaroundi",
+                            "rattus flavipectus"="rattus tanezumi",
+                            "rhinolophus blythi"="rhinolophus pusillus",
+                            "rhinolophus cornutus"="rhinolophus pusillus",
+                            "rhinolophus hildebrandti"="rhinolophus hildebrandtii",
+                            "rhinolophus lobatus"="rhinolophus landeri",
+                            "rhinolophus monoceros"= "rhinolophus pusillus",
+                            "rhinolophus rhodesiae"= "rhinolophus swinnyi",
+                            "scarturus elater"="allactaga elater",
+                            "sorex monticolus"="sorex monticola",
+                            "syntheosciurus granatensis"="sciurus granatensis",
+                            "taeromys dominator"="paruromys dominator",
+                            "talpa aquitania"= "talpa occidentalis",
+                            "tamias amoenus"="neotamias amoenus",
+                            "tamias minimus"="neotamias minimus",
+                            "tamias quadrivittatus"="neotamias quadrivittatus",
+                            "tamias sibiricus"="eutamias sibiricus",
+                            "tamias umbrinus"="neotamias umbrinus",
+                            "terricola subterraneus"="microtus subterraneus",
+                            "triaenops menamena"="triaenops rufus",
+                            "tupaia chinensis"="tupaia belangeri",
+                            "urva auropunctata"="herpestes auropunctatus",
+                            "urva edwardsii"="herpestes edwardsii",
+                            "urva javanica"="herpestes javanicus",
+                            "xanthonycticebus pygmaeus"="nycticebus pygmaeus",
+                            "zygodontomys cherriei"="zygodontomys brevicauda"))
+
+#recheck
+miss <- setdiff(vir$iucn,iucn$binomial)
+
+#merge
 iucn <- iucn %>%
-  dplyr::mutate(binomial = stringr::str_to_lower(binomial)) %>%
-  dplyr::mutate(anyViruses = as.numeric(binomial %in% vir$Host))
+  #dplyr::mutate(binomial = stringr::str_to_lower(binomial)) %>%
+  dplyr::mutate(anyViruses = as.numeric(binomial %in% vir$iucn)) ## match to revalue names
 
 mam_raster <- raster_extract(iucn_data = iucn) # this is the full extent we want
 mammals <- init_data_ob(iucn, mam_raster) # the data object
