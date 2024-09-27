@@ -8,9 +8,11 @@ library(readr)
 library(ggplot2)
 library(rgbif)
 library(rnaturalearth)
+library(rnaturalearthdata)
 library(MoMAColors)
 library(figpatch)
 library(patchwork)
+library(ggpubr)
 
 source(here::here("./src/global-funs.R"))
 options(scipen = 1000)
@@ -72,7 +74,7 @@ bat_map <- ggplot(data = ne_sf) +
     trans = "log",
     breaks = c(1, 100, 20000),
     # labels = scales::cut_short_scale(c(1, 10, 100, 1000, 20000)),
-    labels = scales::label_scientific()
+    # labels = scales::label_scientific()
     # limits = c(1, 15000)
   ) +
   geom_sf() +
@@ -82,11 +84,11 @@ bat_map <- ggplot(data = ne_sf) +
   ylab("") +
   theme(
     legend.position = "inside",
-    legend.position.inside = c(0.5, 0.15),
+    legend.position.inside = c(0.5, 0.14),
     legend.box = "horizontal",
     legend.direction = "horizontal",
     legend.title.position = "top",
-    legend.background = element_rect(fill = alpha("white", 0.7)),
+    legend.background = element_rect(fill = alpha("white", 1)),
     legend.key = element_rect(fill = NA),
     legend.title = element_text(hjust = 0.5),
     legend.box.just = "bottom",
@@ -125,8 +127,8 @@ aedes_map <- ggplot(data = ne_sf) +
     # colors = rev(MoMAColors::moma.colors("ustwo")),
     low = "#9bdced", high = "#134d5b",
     trans = "log",
-    breaks = c(1, 100, 5000),
-    labels = scales::label_scientific()
+    breaks = c(1, 100, 5000)
+    # labels = scales::label_scientific()
     # limits = c(1, 15000)
   ) +
   geom_sf() +
@@ -136,11 +138,11 @@ aedes_map <- ggplot(data = ne_sf) +
   ylab("") +
   theme(
     legend.position = "inside",
-    legend.position.inside = c(0.5, 0.15),
+    legend.position.inside = c(0.5, 0.14),
     legend.box = "horizontal",
     legend.direction = "horizontal",
     legend.title.position = "top",
-    legend.background = element_rect(fill = alpha("white", 0.8)),
+    legend.background = element_rect(fill = alpha("white", 1)),
     legend.key = element_rect(fill = NA),
     legend.title = element_text(hjust = 0.5),
     legend.box.just = "bottom",
@@ -182,4 +184,24 @@ ggsave(
   fig_4,
   height = 10, width = 14,
   dpi = 300
+)
+
+# special save for figures & their component parts
+ggsave(
+  here::here("./figs/fig-4/submission-figs/figure-4.pdf"),
+  fig_4,
+  height = 10, width = 14,
+  dpi = 600
+)
+ggsave(
+  here::here("./figs/fig-4/submission-figs/figure-4-a.pdf"),
+  aedes_map,
+  height = 4, width = 7,
+  dpi = 600
+)
+ggsave(
+  here::here("./figs/fig-4/submission-figs/figure-4-a-image.pdf"),
+  aedes_img,
+  height = 10, width = 14,
+  dpi = 600
 )
