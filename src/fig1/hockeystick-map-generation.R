@@ -18,6 +18,7 @@ library(tidyterra)
 library(raster)
 library(fasterize)
 library(ggnewscale)
+library(tidybayes)
 
 source(here::here("./src/global-funs.R"))
 
@@ -172,6 +173,12 @@ ggsave(
     width = 14, height = 7
 )
 ggsave(
+    here::here("./figs/fig-1/submission-figs/map.pdf"),
+    richness_eidr_map,
+    width = 14, height = 7,
+    dpi = 600
+)
+ggsave(
     here::here("./figs/fig-1/map-hi-def.png"),
     richness_eidr_map,
     width = 14, height = 7,
@@ -254,7 +261,12 @@ ggsave(
     extinctions_plot,
     height = 7, width = 7
 )
-
+ggsave(
+    here::here("./figs/fig-1/submission-figs/extinctions.pdf"),
+    extinctions_plot,
+    width = 7, height = 7,
+    dpi = 600
+)
 ## outbreaks ===================================================================
 
 ### data cleaning ==============================================================
@@ -332,7 +344,12 @@ ggsave(
     spillover_plot,
     height = 7, width = 7
 )
-
+ggsave(
+    here::here("./figs/fig-1/submission-figs/spillover.pdf"),
+    spillover_plot,
+    width = 7, height = 7,
+    dpi = 600
+)
 ## temperature timeseries ======================================================
 
 ### data cleaning ==============================================================
@@ -464,7 +481,12 @@ ggsave(
     temperature_plot,
     height = 7, width = 7
 )
-
+ggsave(
+    here::here("./figs/fig-1/submission-figs/temperature.pdf"),
+    temperature_plot,
+    width = 7, height = 7,
+    dpi = 600
+)
 # putting plots together =======================================================
 
 top_panels <- spillover_plot + extinctions_plot + temperature_plot
@@ -473,6 +495,12 @@ ggsave(
     top_panels,
     height = 7, width = 21,
     dpi = 300
+)
+ggsave(
+    here::here("./figs/fig-1/submission-figs/top-panels.pdf"),
+    top_panels,
+    width = 21, height = 7,
+    dpi = 600
 )
 
 all_panels <- ggpubr::ggarrange(
@@ -507,4 +535,10 @@ ggsave(
     all_panels,
     dpi = 300,
     height = 14, width = 15
+)
+ggsave(
+    here::here("./figs/fig-1/submission-figs/figure-1.pdf"),
+    all_panels,
+    width = 15, height = 14,
+    dpi = 600
 )
